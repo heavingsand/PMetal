@@ -17,6 +17,7 @@
 		9D65DEA52615B60F0054724A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9D65DEA42615B60F0054724A /* SnapKit */; };
 		9D65DEAF2615D3470054724A /* CombineDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 9D65DEAE2615D3470054724A /* CombineDataSources */; };
 		9D67460F26F1EFA800D7F71B /* MetalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D67460E26F1EFA800D7F71B /* MetalVC.swift */; };
+		9D69C4D827198DDD00EE9C49 /* Learning.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D69C4D727198DDD00EE9C49 /* Learning.metal */; };
 		9D6F3350271440AD003E00D9 /* PMetalContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6F334F271440AD003E00D9 /* PMetalContext.swift */; };
 		9D6F3352271440FD003E00D9 /* PMetalLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6F3351271440FD003E00D9 /* PMetalLayer.swift */; };
 		9D6F33542714415C003E00D9 /* MetalBasicThreeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6F33532714415C003E00D9 /* MetalBasicThreeVC.swift */; };
@@ -44,6 +45,7 @@
 		9D65DE9C2615B41F0054724A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9D67460E26F1EFA800D7F71B /* MetalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalVC.swift; sourceTree = "<group>"; };
 		9D69860B27181E9A0022FB41 /* PanSwift-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanSwift-Bridging-Header.h"; sourceTree = "<group>"; };
+		9D69C4D727198DDD00EE9C49 /* Learning.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Learning.metal; sourceTree = "<group>"; };
 		9D6F334F271440AD003E00D9 /* PMetalContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PMetalContext.swift; sourceTree = "<group>"; };
 		9D6F3351271440FD003E00D9 /* PMetalLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PMetalLayer.swift; sourceTree = "<group>"; };
 		9D6F33532714415C003E00D9 /* MetalBasicThreeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalBasicThreeVC.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 			children = (
 				9D9D776026F07E9D00F4F4BC /* Shaders.metal */,
 				9D5EF1E426F2F7FF00D94537 /* TextureRenderer.metal */,
+				9D69C4D727198DDD00EE9C49 /* Learning.metal */,
 				9D8C268426F591E10090153D /* primitive.mtl */,
 				9D8C268326F591E10090153D /* primitive.obj */,
 				9D8C269226F5EA070090153D /* untitled.mtl */,
@@ -251,6 +254,7 @@
 				9D9D776126F07E9D00F4F4BC /* Shaders.metal in Sources */,
 				9D6F3350271440AD003E00D9 /* PMetalContext.swift in Sources */,
 				9D65DE8F2615B41D0054724A /* AppDelegate.swift in Sources */,
+				9D69C4D827198DDD00EE9C49 /* Learning.metal in Sources */,
 				9D67460F26F1EFA800D7F71B /* MetalVC.swift in Sources */,
 				9D65DE912615B41D0054724A /* SceneDelegate.swift in Sources */,
 				9D6F33542714415C003E00D9 /* MetalBasicThreeVC.swift in Sources */,

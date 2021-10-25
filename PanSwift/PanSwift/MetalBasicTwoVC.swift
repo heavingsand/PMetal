@@ -25,7 +25,7 @@ class MetalBasicTwoVC: MetalBasicVC {
         allocator = MTKMeshBufferAllocator(device: metalContext.device)
         
         let vertexDescriptor = MTLVertexDescriptor()
-        vertexDescriptor.attributes[0].format = .float3
+        vertexDescriptor.attributes[0].format = .float2
         vertexDescriptor.attributes[0].offset = 0
         vertexDescriptor.attributes[0].bufferIndex = 0
         vertexDescriptor.layouts[0].stride = MemoryLayout<SIMD3<Float>>.stride
@@ -122,4 +122,31 @@ class MetalBasicTwoVC: MetalBasicVC {
         commandBuffer.commit()
     }
 
+}
+
+// MARK: - 统一缓冲区
+
+struct Vector4 {
+    var x: Float
+    var y: Float
+    var z: Float
+    var w: Float
+}
+
+struct Matrix4x4 {
+    var X: Vector4
+    var Y: Vector4
+    var Z: Vector4
+    var W: Vector4
+    
+    init() {
+        X = Vector4(x: 1, y: 0, z: 0, w: 0)
+        Y = Vector4(x: 0, y: 1, z: 0, w: 0)
+        Z = Vector4(x: 0, y: 0, z: 1, w: 0)
+        W = Vector4(x: 0, y: 0, z: 0, w: 1)
+    }
+    
+    static func rotationAboutAxis(_ axis: float4, byAngle angle: Float32) -> Matrix4x4 {
+        var mat = Matrix4x4()
+    }
 }
