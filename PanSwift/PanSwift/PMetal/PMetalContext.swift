@@ -12,13 +12,16 @@ class PMetalContext {
     
     // MARK: - Property
     
-    // GPU设备
+    /// GPU设备
     private(set) var device: MTLDevice!
     
+    /// 资源库, 用于去寻找shader函数
     private(set) var library: MTLLibrary!
     
+    /// 命令队列
     private(set) var commandQueue: MTLCommandQueue!
     
+    /// 纹理缓存
     private(set) var textureCache: CVMetalTextureCache!
     
     init() {
@@ -32,17 +35,19 @@ class PMetalContext {
         }
         self.device = device
         
+        // 取系统默认资源库
         guard let library = device.makeDefaultLibrary() else {
             fatalError()
         }
         self.library = library
         
-        /** 命令队列创建开销很昂贵, 最好创建一次, 命令缓冲区对象很便宜, 可以多次创建*/
+        /** 命令队列创建开销很昂贵, 最好创建一次, 命令缓冲区对象开销小, 可以多次创建*/
         guard let commandQueue = device.makeCommandQueue() else {
             fatalError()
         }
         self.commandQueue = commandQueue
         
+        // 新建纹理缓存
         var textureCache: CVMetalTextureCache?
         guard CVMetalTextureCacheCreate(kCFAllocatorDefault, nil, device, nil, &textureCache) == kCVReturnSuccess,
               let newTextureCache = textureCache else {

@@ -57,7 +57,8 @@ class MetalBasicThreeVC: UIViewController {
         let backBtn = UIButton(type: .custom)
         view.addSubview(backBtn)
         backBtn.snp.makeConstraints { make in
-            make.left.top.equalTo(25)
+            make.left.equalTo(25)
+            make.top.equalTo(kStatusHeight + 5)
             make.size.equalTo(CGSize(width: 40, height: 40))
         }
         backBtn.setTitle("返回", for: .normal)
@@ -72,14 +73,21 @@ class MetalBasicThreeVC: UIViewController {
     
     // MARK: - Method
     func setupMetal() {
-        /// 三角形顶点数据
+        /// 三角形顶点数据, 顶点坐标分辨是x, y, z (绘制两个三角形可以是6个顶点也可以4个顶点)
+//        let vertexData:[Float] = [
+//            -0.5, 0.5, 0.0,
+//            -0.5, -0.5, 0.0,
+//            0.5, -0.5, 0.0,
+//            -0.5, 0.5, 0.0,
+//            0.5, -0.5, 0.0,
+//            0.5, 0.5, 0.0,
+//        ]
+        
         let vertexData:[Float] = [
-            -0.5, 0.5, 0.0,
-            -0.5, -0.5, 0.0,
-            0.5, -0.5, 0.0,
-            -0.5, 0.5, 0.0,
-            0.5, -0.5, 0.0,
-            0.5, 0.5, 0.0,
+            -0.8, -0.8, 0.0,
+            -0.8, 0.8, 0.0,
+            0.8, -0.8, 0.0,
+            0.8, 0.8, 0.0,
         ]
         
         vertexBuffer = metalContext.device.makeBuffer(bytes: vertexData, length: vertexData.count * MemoryLayout.size(ofValue: vertexData[0]), options: .storageModeShared)
@@ -118,7 +126,7 @@ class MetalBasicThreeVC: UIViewController {
         guard let drawable = metalLayer.nextDrawable() else { return }
         passDescriptor.colorAttachments[0].texture = drawable.texture
         passDescriptor.colorAttachments[0].loadAction = .clear
-        passDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 221.0/255.0, green: 160.0/255.0, blue: 221.0/255.0, alpha: 1.0)
+        passDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 211/255.0, green: 211/255.0, blue: 211/255.0, alpha: 1.0)
         
         /** 获取命令缓冲区*/
         guard let commandBuffer = metalContext.commandQueue.makeCommandBuffer() else {
@@ -131,10 +139,16 @@ class MetalBasicThreeVC: UIViewController {
         renderEncoder?.setRenderPipelineState(pipelineState)
         renderEncoder?.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
         renderEncoder?.setVertexBuffer(vertexColorBuffer, offset: 0, index: 1)
-        renderEncoder?.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
+        // 绘制三角形
+//        renderEncoder?.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
+        // 绘制三角形并
+        renderEncoder?.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+        /** 完成向渲染命令编码器发送命令并完成帧 */
         renderEncoder?.endEncoding()
         
+        // 显示
         commandBuffer.present(drawable)
+        // 提交
         commandBuffer.commit()
     }
     

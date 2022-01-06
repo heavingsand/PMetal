@@ -8,6 +8,25 @@
 import UIKit
 import MetalKit
 
+///主窗口
+public let kMainWindow  = UIApplication.shared.delegate?.window
+///主窗口frame
+public let kMainScreenFrame = UIScreen.main.bounds
+/// 屏幕的宽
+public let kScreenWidth = UIScreen.main.bounds.width
+/// 屏幕的高
+public let kScreenHeight = UIScreen.main.bounds.height
+/// 机型判断
+public let isiPhoneX: Bool = (kScreenHeight == 812 ? true : false)
+/// 导航栏高度
+public let kNavHeight:CGFloat = (kScreenHeight >= 812 ? 88 : 64)
+/// 状态栏高度
+public let kStatusHeight:CGFloat = (kScreenHeight >= 812 ? 44 : 20)
+/// tabbar高度
+public let kTabBarHeight:CGFloat = (kScreenHeight >= 812 ? 83 : 49)
+/// 安全区
+public let kSafaArea = UIApplication.shared.delegate?.window??.safeAreaInsets ?? UIEdgeInsets.zero
+
 class MetalBasicVC: UIViewController {
     
     // MARK: - Property
@@ -34,17 +53,18 @@ class MetalBasicVC: UIViewController {
     }
     
     func setupUI() {
+        setupMTKView()
+        
         let backBtn = UIButton(type: .custom)
         view.addSubview(backBtn)
         backBtn.snp.makeConstraints { make in
-            make.left.top.equalTo(25)
+            make.left.equalTo(25)
+            make.top.equalTo(kNavHeight + 10)
             make.size.equalTo(CGSize(width: 40, height: 40))
         }
         backBtn.setTitle("返回", for: .normal)
         backBtn.setTitleColor(.white, for: .normal)
         backBtn.addTarget(self, action: #selector(backBtnClick), for: .touchUpInside)
-        
-        setupMTKView()
     }
     
     func setupMTKView() {

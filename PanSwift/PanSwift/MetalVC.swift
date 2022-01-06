@@ -11,8 +11,6 @@ import CombineDataSources
 import CombineCocoa
 import SnapKit
 
-public let kSafaArea = UIApplication.shared.delegate?.window??.safeAreaInsets ?? UIEdgeInsets.zero
-
 class JSONCoder {
     @Published public var functionList: Array<Function> = Array()
     @Published public var errorMessage: String?
@@ -54,11 +52,23 @@ class MetalVC: UIViewController {
         
         view.backgroundColor = .white
         
+        if #available(iOS 15.0, *) {
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.configureWithOpaqueBackground()
+            navBarAppearance.backgroundColor = UIColor.white
+            
+            navigationController?.navigationBar.standardAppearance = navBarAppearance
+            navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
+        }
+        
         bindViews()
         
         dataSource.functionList.append(Function(vcName: "MetalBasicOneVC", title: "MetalBasicOne"))
         dataSource.functionList.append(Function(vcName: "MetalBasicTwoVC", title: "MetalBasicTwo"))
         dataSource.functionList.append(Function(vcName: "MetalBasicThreeVC", title: "MetalBasicThree"))
+        dataSource.functionList.append(Function(vcName: "MetalLightVC", title: "MetalLight"))
+        dataSource.functionList.append(Function(vcName: "MetalLoadImageVC", title: "MetalLoadImage"))
+        dataSource.functionList.append(Function(vcName: "MetalRenderImageVC", title: "MetalRenderImage"))
     }
     
     private func bindViews() {

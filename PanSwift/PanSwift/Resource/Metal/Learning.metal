@@ -42,6 +42,24 @@ void vectorTest() {
     float4 m = float4(4, 3, 2, 1);
 //    m.xg = float2(0, 9) // error!! 不可以混用
     m.rg = float2(0, 9); // m = [0, 9, 2, 1]
+    
+    /**
+     packed_float4和float4的区别
+     紧致矢量类型是数组，而float4部分是结构。
+     */
+    packed_float4 packedFloat4;
+    packedFloat4[0] = 0.0f;
+    packedFloat4[1] = 1.0f;
+    packedFloat4[2] = 2.0f;
+    packedFloat4[3] = 3.0f;
+    packed_float4 anotherPackedFloat4 = packed_float4(0.0f, 1.0f, 2.0f, 3.0f);
+    
+    float4 normalFloat;
+    normalFloat.x = 0; //equivalent to f.r = 0;
+    normalFloat.y = 1; //equivalent to f.g = 1;
+    normalFloat.z = 2; //equivalent to f.b = 2;
+    normalFloat.w = 3; //equivalent to f.a = 3;
+    float4 anotherFloat4 = float4(0.0f, 1.0f, 2.0f, 3.0f);
 }
 
 // MARK: - 矩阵
@@ -151,7 +169,7 @@ kernel void kernelTest() {
     // ...
 }
 
-// MARK: - 变量或参数的地址空间修饰符
+// MARK: - 地址空间修饰符
 
 /**
  地址空间修饰符：用来指定 一个函数 参数/变量 被分配在内存中的哪块区域。
@@ -232,7 +250,7 @@ kernel void threadTest() {
     thread float *p = &x;
 }
 
-// MARK: - 函数参数与变量
+// MARK: - 属性修饰符(函数参数与变量的传递修饰符)
 
 /**
  图形绘制/并行计算着色函数的输入/输出都需要通过参数传递 ( 除了常量地址空间变量和程序域中定义的采样器 外)。参数如下：
@@ -247,6 +265,12 @@ kernel void threadTest() {
 
  threadgroup：线程共享的缓存
  
+ 属性修饰符的目的
+
+ . 参数表示资源的定位，可以理解为端口
+ . 在固定管线和可编程管线进行内建变量的传递
+ . 将数据沿着渲染管线从顶点函数传递片元函数.
+ 
  对于每个着色器函数来说，一个修饰符是必须指定的，它用来设定一个缓存、纹理、采样器的位置：
 
  device buffer / constant buffer --> [[buffer(index)]]
@@ -260,26 +284,32 @@ kernel void threadTest() {
  index：一个 unsigned integer 类型的值，表示一个缓存、纹理、采样器的位置(在函数参数索引表中的位置)。语法上讲，属性修饰符的声明位置应该位于参数变量名之后。
  */
 
-/// 一个简单的并行计算着色函数 my_add ，它把两个设备地址空间的魂村 inA、inB 相加，把结果写入缓存 out。
-kernel void my_add(device float4 *inA [[ buffer(0) ]],
+/// 一个简单的并行计算着色函数 my_add ，它把两个设备地址空间的缓存 inA、inB 相加，把结果写入缓存 out。
+/*
+ kernel：并行计算函数修饰符
+ void：函数返回值类型
+ my_add：函数名
+  device float4 *inA [[buffer(0)]]：定义了一个float4类型的指针，指向一个4维向量空间，放在设备内存空间（即显存GPU中）
+    - const device：只决定放在哪里
+    - inA：变量名
+    - [[buffer(0)]] 对应 buffer中0这个id
+ */
+kernel void my_add(device float4 *inA [[ buffer(0) ]], // 属性修饰符 “buffer(index)” 为着色函数参数设定了缓存的位置, inA：放在设备地址空间，缓存位置对应的是 buffer(0)这个ID
                    device float4 *inB [[ buffer(1) ]],
                    device float4 *out [[ buffer(2) ]],
-                   uint id [[ thread_position_in_grid ]]) {
-    /**
-     属性修饰符 “buffer(index)” 为着色函数参数设定了缓存的位置, inA：放在设备地址空间，缓存位置对应的是 buffer(0)这个ID
-     thread_position_in_grid：用于表示当前节点，在多线程网格中的位置 --> 我们是无法知道当前在GPU的哪个运算单元里，thread_position_in_grid 知道，我们通过它获取即可。
-     */
+                   uint id [[ thread_position_in_grid ]]) // thread_position_in_grid：用于表示当前节点，在多线程网格中的位置 --> 我们是无法知道当前在GPU的哪个运算单元里，thread_position_in_grid 知道，我们通过它获取即可。
+{
     out[id] = inA[id] + inB[id];
 }
 
-// MARK: - 内建变量属性修饰符
+// MARK: - 内建变量修饰符
 
 /**
  [[vertex_id]] -- 顶点ID标识符
 
- [[position]] -- 1、当前顶点信息(float4 - xyzw)  2、也可描述 片元在窗口的相对坐标：当前这个像素点在屏幕上的哪个位置
+ [[position]] -- 1、在顶点函数中表示当前的顶点信息(float4 - xyzw)  2、也可描述 片元在窗口的相对坐标(x，y，z，1/w)：当前这个像素点在屏幕上的哪个位置
 
- [[point_size]] -- 点的大小
+ [[point_size]] -- 点的大小，类型是float
 
  [[color(m)]] -- 颜色，m 编译前要确定
  
