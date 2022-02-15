@@ -25,6 +25,7 @@ class MetalRenderImageVC: MetalBasicVC {
     /// lut纹理
     private var lutTexture: MTLTexture!
     
+    /// 顶点纹理
     struct TextureVertex {
         let position: SIMD4<Float>
         let texCoords: SIMD2<Float>

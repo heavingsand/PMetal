@@ -34,6 +34,7 @@ class PMetalContext {
             fatalError()
         }
         self.device = device
+        HSLog("🤔🤔DeviceGPUName: \(device.name)")
         
         // 取系统默认资源库
         guard let library = device.makeDefaultLibrary() else {

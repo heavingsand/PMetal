@@ -63,12 +63,13 @@ class MetalVC: UIViewController {
         
         bindViews()
         
-        dataSource.functionList.append(Function(vcName: "MetalBasicOneVC", title: "MetalBasicOne"))
-        dataSource.functionList.append(Function(vcName: "MetalBasicTwoVC", title: "MetalBasicTwo"))
-        dataSource.functionList.append(Function(vcName: "MetalBasicThreeVC", title: "MetalBasicThree"))
-        dataSource.functionList.append(Function(vcName: "MetalLightVC", title: "MetalLight"))
-        dataSource.functionList.append(Function(vcName: "MetalLoadImageVC", title: "MetalLoadImage"))
-        dataSource.functionList.append(Function(vcName: "MetalRenderImageVC", title: "MetalRenderImage"))
+        dataSource.functionList.append(Function(vcName: "MetalBasicOneVC", title: "加载系统模型"))
+        dataSource.functionList.append(Function(vcName: "MetalBasicTwoVC", title: "加载本地模型"))
+        dataSource.functionList.append(Function(vcName: "MetalBasicThreeVC", title: "绘制矩形"))
+        dataSource.functionList.append(Function(vcName: "MetalLightVC", title: "灯光"))
+        dataSource.functionList.append(Function(vcName: "MetalLoadImageVC", title: "加载图片"))
+        dataSource.functionList.append(Function(vcName: "MetalRenderImageVC", title: "Lut图片滤镜"))
+        dataSource.functionList.append(Function(vcName: "MetalCameraVC", title: "相机预览"))
     }
     
     private func bindViews() {

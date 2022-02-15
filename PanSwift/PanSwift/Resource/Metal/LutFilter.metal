@@ -62,6 +62,7 @@ fragment half4 lut_texture_fragment(TextureVertex textureVertex [[ stage_in ]], 
      SquareSize是63/512，一个正方形小格子在整个图片的纹理宽度
      */
     
+//    texPos1.x = (imageColor.r * 63 + quad1.x * 64) / 512;
     texPos1.x = (quad1.x * 0.125) + stepSize + (SquareSize * imageColor.r);
     texPos1.y = (quad1.y * 0.125) + stepSize + (SquareSize * imageColor.g);
     
