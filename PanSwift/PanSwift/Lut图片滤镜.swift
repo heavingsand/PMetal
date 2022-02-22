@@ -122,9 +122,32 @@ class MetalRenderImageVC: MetalBasicVC {
             return
         }
         self.imageTexture = imageTexture
+        
+        // 获取图片
+//        let imgPath = Bundle.main.path(forResource: "face.png", ofType: nil)
+//        guard let image = UIImage(contentsOfFile: imgPath!) else {
+//            print("图片加载失败")
+//            return
+//        }
+//
+//        // 创建纹理描述符
+//        let textureDes = MTLTextureDescriptor()
+//        textureDes.pixelFormat = .bgra8Unorm
+//        textureDes.width = Int(image.size.width)
+//        textureDes.height = Int(image.size.height)
+//        textureDes.usage = .shaderRead
+//
+//        if (imageTexture == nil) {
+//            imageTexture = metalContext.device.makeTexture(descriptor: textureDes)
+//        }
+//
+//        let region = MTLRegionMake2D(0, 0, Int(image.size.width), Int(image.size.height))
+//        let data = loadImage(with: image)
+//        imageTexture?.replace(region: region, mipmapLevel: 0, withBytes: data, bytesPerRow: 4 * Int(image.size.width))
+//        data.deallocate()
     }
     
-    /// 设置图片纹理
+    /// 设置LUT纹理
     func setupLutTexture() {
         // 使用MTKTextureLoader加载图像数据
         let textureLoader = MTKTextureLoader(device: metalContext.device)
@@ -167,6 +190,16 @@ class MetalRenderImageVC: MetalBasicVC {
             HSLog("RenderEncoder make fail")
             return
         }
+        
+        // lut参数配置
+//        var params = LutFilterParameters(clipOriginX: 0,
+//                                         clipOriginY: 0,
+//                                         clipSizeX: UInt32(imageTexture.width),
+//                                         clipSizeY: UInt32(imageTexture.height),
+//                                         saturation: 1,
+//                                         changeColor: 1,
+//                                         changeCoord: 0)
+        
         // 设置渲染管道，以保证顶点和片元两个shader会被调用
         renderEncoder.setRenderPipelineState(pipelineState)
         // 设置顶点缓存
@@ -177,6 +210,8 @@ class MetalRenderImageVC: MetalBasicVC {
         renderEncoder.setFragmentTexture(lutTexture, index: 1)
         // 设置片段采样状态
         renderEncoder.setFragmentSamplerState(samplerState, index: 0)
+        // 设置配置信息
+//        renderEncoder.setFragmentBytes(&params, length: MemoryLayout.size(ofValue: params), index: 0)
         // 绘制显示区域
         renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
         // 完成向渲染命令编码器发送命令并完成帧
@@ -188,5 +223,26 @@ class MetalRenderImageVC: MetalBasicVC {
         commandBuffer.commit()
     }
     
+    /// 获取图片数据
+    func loadImage(with image: UIImage) -> UnsafeMutableRawPointer {
+        
+        guard let cgImage = image.cgImage else {
+            print("没有获取到图片的cgImage")
+            return UnsafeMutableRawPointer.allocate(byteCount: 0, alignment: 0)
+        }
+        
+        let width = cgImage.width
+        let height = cgImage.height
+        
+        guard let data = calloc(width * height * 4, MemoryLayout<UInt8>.size) else {
+            print("data创建失败")
+            return UnsafeMutableRawPointer.allocate(byteCount: 0, alignment: 0)
+        }
+        
+        let context = CGContext(data: data, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)
+        context?.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+        
+        return data
+    }
     
 }

@@ -24,24 +24,27 @@ class MetalCameraVC: MetalBasicVC {
     private var samplerState: MTLSamplerState!
     
     /// 图片纹理
-    private var texture: MTLTexture!
+    private var texture: MTLTexture?
     
 
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupMetal()
+        mtkView.frame = CGRect(x: 0,
+                               y: 44,
+                               width: UIScreen.main.bounds.size.width,
+                               height: UIScreen.main.bounds.size.width / 9.0 * 16.0)
+        mtkView.delegate = self
+        
         cameraManager.delegate = self
         cameraManager.prepare()
+        setupMetal()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-//        mtkView = MTKView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.height), device: metalContext.device)
-        mtkView.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.height)
-//        mtkView.center = CGPoint(x: view.frame.size.width / 2, y: view.frame.size.height / 2)
+
         cameraManager.startRunning()
     }
     
@@ -161,9 +164,22 @@ extension MetalCameraVC: CameraManagerDelegate {
     func captureOutput(didOutput sampleBuffer: CMSampleBuffer) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         
-        guard let texture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: pixelBuffer) else { return }
+        texture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: pixelBuffer)
+    }
+    
+}
+
+// MARK: - MTKView代理
+extension MetalCameraVC: MTKViewDelegate {
+    
+    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        print("MTKView size: \(size)")
+    }
+
+    
+    func draw(in view: MTKView) {
+        guard let texture = self.texture else { return }
         
         render(with: texture)
     }
-    
 }

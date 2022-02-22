@@ -104,8 +104,8 @@ class MetalLoadImageVC: MetalBasicVC {
             HSLog("RenderEncoder make fail")
             return
         }
-        // 设置显示区域
-//        renderEncoder.setViewport(MTLViewport(originX: 0, originY: 0, width: 1417, height: 1417, znear: -1.0, zfar: 1.0))
+        // 设置显示区域, 要放在前面设置才会生效
+//        renderEncoder.setViewport(MTLViewport(originX: 0, originY: 0, width: 100, height: 100, znear: -1.0, zfar: 1.0))
         // 设置渲染管道，以保证顶点和片元两个shader会被调用
         renderEncoder.setRenderPipelineState(pipelineState)
         // 设置顶点缓存

@@ -71,7 +71,8 @@ class MetalBasicVC: UIViewController {
         let mtkView = MTKView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.width), device: metalContext.device)
         mtkView.center = CGPoint(x: view.frame.size.width / 2, y: view.frame.size.height / 2)
         mtkView.clearColor = MTLClearColor(red: 1, green: 1, blue: 0.8, alpha: 1)
-        view.layer.addSublayer(mtkView.layer)
+//        view.layer.addSublayer(mtkView.layer)
+        view.addSubview(mtkView)
         
         self.mtkView = mtkView
     }
