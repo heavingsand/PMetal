@@ -156,12 +156,14 @@ fragment half4 lut_texture_fragment_two(TextureVertex textureVertex [[ stage_in 
 
 // lut滤镜并行计算函数
 kernel void lut_texture_kernel(constant LutFilterParameters *params [[buffer(0)]], // lut滤镜参数配置
-                               texture2d<half, access::read> imageTexture [[texture(0)]], // 图片纹理
+                               texture2d<half, access::sample> imageTexture [[texture(0)]], // 图片纹理
                                texture2d<half, access::sample> lutTexture [[texture(1)]], // lut纹理
                                texture2d<half, access::write> targetTexture [[texture(2)]], // 目标纹理
+                               sampler sampler [[sampler(0)]],
                                uint2 gridPosition [[thread_position_in_grid]])
 {
-    half4 color = imageTexture.read(gridPosition);
+//    half4 color = imageTexture.read(gridPosition);
+    half4 color = imageTexture.sample(sampler, float2(gridPosition));
     
     float blueColor = color.b * 63.0;
     
@@ -181,8 +183,10 @@ kernel void lut_texture_kernel(constant LutFilterParameters *params [[buffer(0)]
     texPos2.x = (quad2.x * 0.125) + 0.5/512.0 + ((0.125 - 1.0/512.0) * color.r);
     texPos2.y = (quad2.y * 0.125) + 0.5/512.0 + ((0.125 - 1.0/512.0) * color.g);
     
-    half4 newColor1 = lutTexture.read(uint2(texPos1.x * 512, texPos1.y * 512));
-    half4 newColor2 = lutTexture.read(uint2(texPos2.x * 512, texPos2.y * 512));
+//    half4 newColor1 = lutTexture.read(uint2(texPos1.x * 512, texPos1.y * 512));
+//    half4 newColor2 = lutTexture.read(uint2(texPos2.x * 512, texPos2.y * 512));
+    half4 newColor1 = lutTexture.sample(sampler, float2(texPos1.x * 512, texPos2.y * 512 ));
+    half4 newColor2 = lutTexture.sample(sampler, float2(texPos2.x * 512, texPos2.y * 512 ));
     half4 newColor = mix(newColor1, newColor2, half(fract(blueColor)));
     half4 finalColor = mix(color, half4(newColor.rgb, color.w), half(params->saturation));
     

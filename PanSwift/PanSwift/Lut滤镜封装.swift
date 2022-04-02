@@ -1,8 +1,8 @@
 //
-//  MetalRenderCameraVC.swift
+//  MetalLutObjCameraVC.swift
 //  PanSwift
 //
-//  Created by Pan on 2022/2/17.
+//  Created by Pan on 2022/4/2.
 //
 
 import UIKit
@@ -10,18 +10,7 @@ import MetalKit
 import CoreMedia
 import CoreGraphics
 
-/// Lut滤镜参数配置
-//struct LutFilterParameters {
-//    let clipOriginX: UInt32
-//    let clipOriginY: UInt32
-//    let clipSizeX: UInt32
-//    let clipSizeY: UInt32
-//    let saturation: Float32
-//    let changeColor: UInt16
-//    let changeCoord: UInt16
-//}
-
-class MetalRenderCameraVC: MetalBasicVC {
+class MetalLutObjCameraVC: MetalBasicVC {
     
     // MARK: - Property
     let cameraManager = PCameraManager()
@@ -49,6 +38,9 @@ class MetalRenderCameraVC: MetalBasicVC {
     
     /// 滤镜强度
     private var saturation: Float32 = 1.0
+    
+    /// lut滤镜对象
+    private var lutFilter: PMetalLutFilter?
     
     /// 滤镜视图
     lazy var collectionView: UICollectionView = {
@@ -87,15 +79,17 @@ class MetalRenderCameraVC: MetalBasicVC {
         slider.addTarget(self, action: #selector(sliderValueChange(_:)), for: .valueChanged)
         return slider
     }()
-    
+
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         mtkView.frame = CGRect(x: 0,
                                y: 44,
                                width: UIScreen.main.bounds.size.width,
                                height: UIScreen.main.bounds.size.width / 9.0 * 16.0)
+        mtkView.framebufferOnly = false
+        mtkView.isPaused = true
         mtkView.delegate = self
         
         cameraManager.delegate = self
@@ -195,43 +189,24 @@ class MetalRenderCameraVC: MetalBasicVC {
     
     /// 设置LUT纹理
     func setupLutTexture(with imageName: String) {
-//        // 使用MTKTextureLoader加载图像数据
-//        let textureLoader = MTKTextureLoader(device: metalContext.device)
-//        // 创建图片纹理
-//        let options = [
-//            MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue | MTLTextureUsage.shaderWrite.rawValue | MTLTextureUsage.renderTarget.rawValue), // 设置纹理的用途是读写和用于渲染
-//            MTKTextureLoader.Option.SRGB: false, // 设置是否使用SRGB像素
-//            MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.private.rawValue) // 纹理只在GPU应用
-//        ]
-//        lutTexture = try? textureLoader.newTexture(name: imageName, scaleFactor: 1, bundle: nil, options: options)
-        
         // 获取图片
         guard let image = UIImage(named: imageName) else {
             print("图片加载失败")
             return
         }
-
-        // 创建纹理描述符
-        let textureDes = MTLTextureDescriptor()
-        textureDes.pixelFormat = .bgra8Unorm
-        textureDes.width = Int(image.size.width)
-        textureDes.height = Int(image.size.height)
-        textureDes.usage = .shaderRead
-
-        if (lutTexture == nil) {
-            lutTexture = metalContext.device.makeTexture(descriptor: textureDes)
-        }
-
-        let region = MTLRegionMake2D(0, 0, Int(image.size.width), Int(image.size.height))
-        let data = loadImage(with: image)
-        lutTexture?.replace(region: region, mipmapLevel: 0, withBytes: data, bytesPerRow: 4 * Int(image.size.width))
-        data.deallocate()
+        
+        lutFilter = PMetalLutFilter(device: metalContext.device)
+        lutFilter?.lutImage = image
     }
     
     /// 渲染
     func render(with texture: MTLTexture) {
-        // 获取当前帧的可绘制内容
-        guard let drawable = mtkView.currentDrawable else {
+        guard let metalLayer = mtkView.layer as? CAMetalLayer else {
+            HSLog("metalLayer get fail")
+            return
+        }
+
+        guard let drawable = metalLayer.nextDrawable() else {
             HSLog("drawable get fail")
             return
         }
@@ -242,43 +217,8 @@ class MetalRenderCameraVC: MetalBasicVC {
             return
         }
         
-        // 获取过程描述符, MTLRenderPassDescriptor描述一系列attachments的值，类似GL的FrameBuffer；同时也用来创建MTLRenderCommandEncoder
-        guard let passDescriptor = mtkView.currentRenderPassDescriptor else {
-            HSLog("passDescriptor get fail")
-            return
-        }
-        
-        // 配置编码渲染命令
-        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: passDescriptor) else {
-            HSLog("RenderEncoder make fail")
-            return
-        }
-        
-        // lut参数配置
-        var params = LutFilterParameters(clipOriginX: 0,
-                                         clipOriginY: 0,
-                                         clipSizeX: UInt32(clipSizeX / view.frame.width * CGFloat(texture.width)),
-                                         clipSizeY: UInt32(texture.height),
-                                         saturation: saturation,
-                                         changeColor: 1,
-                                         changeCoord: 0)
-        
-        // 设置渲染管道，以保证顶点和片元两个shader会被调用
-        renderEncoder.setRenderPipelineState(pipelineState)
-        // 设置顶点缓存
-        renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-        // 设置片段纹理
-        renderEncoder.setFragmentTexture(texture, index: 0)
-        // 设置lut纹理
-        renderEncoder.setFragmentTexture(lutTexture, index: 1)
-        // 设置片段采样状态
-        renderEncoder.setFragmentSamplerState(samplerState, index: 0)
-        // 设置配置信息
-        renderEncoder.setFragmentBytes(&params, length: MemoryLayout.size(ofValue: params), index: 0)
-        // 绘制显示区域
-        renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
-        // 完成向渲染命令编码器发送命令并完成帧
-        renderEncoder.endEncoding()
+        lutFilter?.rect = CGRect(x: 0, y: 0, width: Int(clipSizeX / view.frame.width * CGFloat(texture.width)), height: texture.height)
+        lutFilter?.encode(commandBuffer: commandBuffer, sourceTexture: texture, destinationTexture: drawable.texture)
         
         // 显示
         commandBuffer.present(drawable)
@@ -313,18 +253,22 @@ class MetalRenderCameraVC: MetalBasicVC {
 }
 
 // MARK: - 相机代理
-extension MetalRenderCameraVC: CameraManagerDelegate {
+extension MetalLutObjCameraVC: CameraManagerDelegate {
     
     func captureOutput(didOutput sampleBuffer: CMSampleBuffer) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         
         texture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: pixelBuffer)
+        
+//        DispatchQueue.main.async {
+            self.mtkView.draw()
+//        }
     }
     
 }
 
 // MARK: - MTKView代理
-extension MetalRenderCameraVC: MTKViewDelegate {
+extension MetalLutObjCameraVC: MTKViewDelegate {
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         print("MTKView size: \(size)")
@@ -334,12 +278,15 @@ extension MetalRenderCameraVC: MTKViewDelegate {
     func draw(in view: MTKView) {
         guard let texture = self.texture else { return }
         
-        render(with: texture)
+        DispatchQueue.main.async {
+            self.render(with: texture)
+        }
     }
+    
 }
 
 // MARK: - UICollectionView代理
-extension MetalRenderCameraVC: UICollectionViewDelegate, UICollectionViewDataSource {
+extension MetalLutObjCameraVC: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return lutData.count
@@ -355,33 +302,4 @@ extension MetalRenderCameraVC: UICollectionViewDelegate, UICollectionViewDataSou
         setupLutTexture(with: lutData[indexPath.row])
     }
     
-}
-
-class LutCell: UICollectionViewCell {
-    
-    lazy var imageView: UIImageView = {
-        let imageView = UIImageView()
-        self.contentView.addSubview(imageView)
-        imageView.snp.makeConstraints { make in
-            make.edges.equalTo(0)
-        }
-        return imageView
-    }()
-    
-    override init(frame: CGRect) {
-        super .init(frame: frame)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func reloadImage(with imageName: String) {
-        guard let image = UIImage(named: imageName) else {
-            print("图片加载失败")
-            return
-        }
-        
-        imageView.image = image
-    }
 }

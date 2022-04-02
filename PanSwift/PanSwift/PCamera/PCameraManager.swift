@@ -152,7 +152,7 @@ extension PCameraManager {
         // 配置session
         beginConfiguration()
         
-        session.sessionPreset = .hd4K3840x2160
+        session.sessionPreset = .iFrame1280x720
         
         // Add a video input
         guard session.canAddInput(videoDeviceInput) else {

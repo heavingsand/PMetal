@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9D105E7F2616FAA8006667CB /* CombineCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 9D105E7E2616FAA8006667CB /* CombineCocoa */; };
+		9D26AC2227F82F7B00C84F77 /* Lut滤镜封装.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D26AC2127F82F7B00C84F77 /* Lut滤镜封装.swift */; };
 		9D2AF71227BE37240063E975 /* 相机滤镜.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D2AF71127BE37240063E975 /* 相机滤镜.swift */; };
 		9D5AD905277C16E8004ECD57 /* face.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D5AD904277C16E8004ECD57 /* face.png */; };
 		9D5AD907277C171D004ECD57 /* 加载图片.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5AD906277C171D004ECD57 /* 加载图片.swift */; };
@@ -48,6 +49,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9D26AC2127F82F7B00C84F77 /* Lut滤镜封装.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Lut滤镜封装.swift"; sourceTree = "<group>"; };
 		9D2AF71127BE37240063E975 /* 相机滤镜.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "相机滤镜.swift"; sourceTree = "<group>"; };
 		9D5AD904277C16E8004ECD57 /* face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = face.png; sourceTree = "<group>"; };
 		9D5AD906277C171D004ECD57 /* 加载图片.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "加载图片.swift"; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 				9DE3997527857BF90020A937 /* Lut图片滤镜.swift */,
 				9DC9D52F279AB2DE007E7578 /* 相机预览.swift */,
 				9D2AF71127BE37240063E975 /* 相机滤镜.swift */,
+				9D26AC2127F82F7B00C84F77 /* Lut滤镜封装.swift */,
 				9D69860D271823410022FB41 /* Supporting Files */,
 			);
 			path = PanSwift;
@@ -333,6 +336,7 @@
 				9DE3997A2785A9120020A937 /* LutFilter.metal in Sources */,
 				9D6F33542714415C003E00D9 /* 绘制矩形.swift in Sources */,
 				9D6F3352271440FD003E00D9 /* PMetalLayer.swift in Sources */,
+				9D26AC2227F82F7B00C84F77 /* Lut滤镜封装.swift in Sources */,
 				9D8C268D26F59C830090153D /* 加载本地模型.swift in Sources */,
 				9D5EF1E526F2F7FF00D94537 /* TextureRenderer.metal in Sources */,
 				9DC2E29E26EF38CA00EB47C4 /* HSLog.swift in Sources */,
@@ -577,7 +581,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
 			requirement = {
-				kind = upToNextMajorVersion;
+				kind = upToNextMinorVersion;
 				minimumVersion = 5.4.2;
 			};
 		};
