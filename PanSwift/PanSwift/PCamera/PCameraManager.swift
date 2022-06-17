@@ -34,7 +34,7 @@ public final class PCameraManager: NSObject {
     
     let session = AVCaptureSession()
     
-    let sessionQueue = DispatchQueue(label: "com.cameraManager.sessionQueue")
+    let sessionQueue = DispatchQueue(label: "com.pan.cameraManager.sessionQueue")
     
     var captureDevice: AVCaptureDevice!
     
@@ -42,7 +42,7 @@ public final class PCameraManager: NSObject {
     
     let videoDataOutput = AVCaptureVideoDataOutput()
     
-    let videoDataOutputQueue = DispatchQueue(label: "com.cameraManager.videoDataOutputQueue")
+    let videoDataOutputQueue = DispatchQueue(label: "com.pan.cameraManager.videoDataOutputQueue")
     
     private var setupResult: SessionSetupResult = .success
     
@@ -171,6 +171,30 @@ extension PCameraManager {
             return
         }
         session.addOutput(videoDataOutput)
+        
+        if AVCaptureDevice.supportDolbyVision() {
+            for format in videoDevice.formats {
+                let description = format.formatDescription
+                if CMFormatDescriptionGetMediaSubType(description) == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, format.isMultiCamSupported {
+//                if CMVideoFormatDescriptionGetDimensions(description).width == 3840 {
+                    do {
+                        try videoDevice.lockForConfiguration()
+                        videoDevice.activeFormat = format
+                        videoDevice.activeVideoMinFrameDuration = CMTimeMake(value: 1, timescale: 30)
+                        videoDevice.activeVideoMaxFrameDuration = CMTimeMake(value: 1, timescale: 30)
+                        /// 重设颜色空间为最高支持
+                        if #available(iOS 10.0, *) {
+                            videoDevice.activeColorSpace = format.supportedColorSpaces.last!;
+                        }
+                        videoDevice.unlockForConfiguration()
+                        break
+                    } catch {
+                        print(error)
+                        return
+                    }
+                }
+            }
+        }
         
         commitConfiguration()
     }

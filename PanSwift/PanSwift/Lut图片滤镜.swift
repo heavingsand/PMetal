@@ -112,6 +112,9 @@ class MetalRenderImageVC: MetalBasicVC {
         let imgPath = Bundle.main.path(forResource: "face.png", ofType: nil)
         let textureUrl = URL(fileURLWithPath: imgPath!)
         // 创建图片纹理
+        /**
+         使用MTKTextureLoader加载颜色查找表（Lookup Table）图像时，默认情况下它生成sRGB颜色范围的纹理，即使图像元数据中并不声明sRGB。如果这影响了滤镜的表现，将MTKTextureLoaderOptionSRGB设置为false让MTKTextureLoader按图像原始色彩空间加载即可
+         */
         let options = [
             MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue | MTLTextureUsage.shaderWrite.rawValue | MTLTextureUsage.renderTarget.rawValue), // 设置纹理的用途是读写和用于渲染
             MTKTextureLoader.Option.SRGB: false, // 设置是否使用SRGB像素

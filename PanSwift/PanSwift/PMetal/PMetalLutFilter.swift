@@ -130,9 +130,9 @@ class PMetalLutFilter: MPSUnaryImageKernel {
         // 每个线程组的总线程数除以线程执行宽度
         let height = pipelineState.maxTotalThreadsPerThreadgroup / width
         // 网格大小
+        let threadsPerGroup = MTLSizeMake(width, height, 1)
         let threadsPerGrid = MTLSize(width: (sourceTexture.width + width - 1) / width, height: (sourceTexture.height + height - 1) / height, depth: 1)
 //        let threadsPerGrid = MTLSize(width: sourceTexture.width, height: sourceTexture.height + height, depth: 1)
-        let threadsPerGroup = MTLSize(width: width, height: height, depth: 1)
         
         // 配置编码渲染命令
         guard let encoder = commandBuffer.makeComputeCommandEncoder() else {

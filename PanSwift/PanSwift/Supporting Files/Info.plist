@@ -8,6 +8,8 @@
 	<string>请求相册权限</string>
 	<key>NSCameraUsageDescription</key>
 	<string>请求相机权限</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>请求麦克风权限</string>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_panswift._tcp</string>
