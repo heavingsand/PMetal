@@ -162,9 +162,12 @@ kernel void lut_texture_kernel(constant LutFilterParameters *params [[buffer(0)]
                                sampler sampler [[sampler(0)]],
                                uint2 gridPosition [[thread_position_in_grid]])
 {
-//    half4 color = imageTexture.read(gridPosition);
-    half4 color = imageTexture.sample(sampler, float2(gridPosition));
-    
+    float width = imageTexture.get_width();
+    float height = imageTexture.get_height();
+
+    half4 color = imageTexture.read(gridPosition);
+//    half4 color = imageTexture.sample(sampler, float2(gridPosition));
+
     float blueColor = color.b * 63.0;
     
     int2 quad1;
@@ -182,19 +185,21 @@ kernel void lut_texture_kernel(constant LutFilterParameters *params [[buffer(0)]
     half2 texPos2;
     texPos2.x = (quad2.x * 0.125) + 0.5/512.0 + ((0.125 - 1.0/512.0) * color.r);
     texPos2.y = (quad2.y * 0.125) + 0.5/512.0 + ((0.125 - 1.0/512.0) * color.g);
-    
-//    half4 newColor1 = lutTexture.read(uint2(texPos1.x * 512, texPos1.y * 512));
-//    half4 newColor2 = lutTexture.read(uint2(texPos2.x * 512, texPos2.y * 512));
-    half4 newColor1 = lutTexture.sample(sampler, float2(texPos1.x * 512, texPos2.y * 512 ));
-    half4 newColor2 = lutTexture.sample(sampler, float2(texPos2.x * 512, texPos2.y * 512 ));
+
+    half4 newColor1 = lutTexture.read(uint2(texPos1.x * 512, texPos1.y * 512));
+    half4 newColor2 = lutTexture.read(uint2(texPos2.x * 512, texPos2.y * 512));
+//    half4 newColor1 = lutTexture.sample(sampler, float2(texPos1.x * 512, texPos2.y * 512 ));
+//    half4 newColor2 = lutTexture.sample(sampler, float2(texPos2.x * 512, texPos2.y * 512 ));
     half4 newColor = mix(newColor1, newColor2, half(fract(blueColor)));
     half4 finalColor = mix(color, half4(newColor.rgb, color.w), half(params->saturation));
-    
+
+    uint2 destCoords = gridPosition + params->clipOrigin;
+
     uint2 transformCoords = gridPosition;
     
     //transform coords for y
     if (params->changeCoord) {
-        transformCoords = uint2(gridPosition.x, imageTexture.get_height() - gridPosition.y);
+        transformCoords = uint2(destCoords.x, height - destCoords.y);
     }
     
     //transform color for r&b

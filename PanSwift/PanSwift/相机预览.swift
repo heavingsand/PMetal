@@ -8,6 +8,7 @@
 import UIKit
 import MetalKit
 import CoreMedia
+import Photos
 
 class MetalCameraVC: MetalBasicVC {
     
@@ -161,10 +162,14 @@ class MetalCameraVC: MetalBasicVC {
 // MARK: - 相机代理
 extension MetalCameraVC: CameraManagerDelegate {
     
-    func captureOutput(didOutput sampleBuffer: CMSampleBuffer) {
+    func videoCaptureOutput(didOutput sampleBuffer: CMSampleBuffer, fromOutput videoDataOutput: AVCaptureVideoDataOutput) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         
         texture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: pixelBuffer)
+    }
+    
+    func audioCaptureOutput(didOutput sampleBuffer: CMSampleBuffer, fromOutput audioDataOutput: AVCaptureAudioDataOutput) {
+        
     }
     
 }

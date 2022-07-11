@@ -9,6 +9,7 @@ import UIKit
 import MetalKit
 import CoreMedia
 import CoreGraphics
+import Photos
 
 class MetalLutObjCameraVC: MetalBasicVC {
     
@@ -41,6 +42,18 @@ class MetalLutObjCameraVC: MetalBasicVC {
     
     /// lut滤镜对象
     private var lutFilter: PMetalLutFilter?
+    
+    /// 是否已经准备好渲染
+    private var isPrepared = false
+    
+    /// 像素缓冲池
+    private var outputPixelBufferPool: CVPixelBufferPool?
+    
+    /// 视频描述对象
+    private var videoTrackSourceFormatDescription: CMFormatDescription?
+    
+    private var viewWidth: CGFloat = 0
+    private var viewHeight: CGFloat = 0
     
     /// 滤镜视图
     lazy var collectionView: UICollectionView = {
@@ -79,6 +92,26 @@ class MetalLutObjCameraVC: MetalBasicVC {
         slider.addTarget(self, action: #selector(sliderValueChange(_:)), for: .valueChanged)
         return slider
     }()
+    
+    /// 录制按钮
+    lazy var recordButton: UIButton = {
+        let recordButton = UIButton()
+        self.view.addSubview(recordButton)
+        recordButton.snp.makeConstraints { make in
+            make.bottom.equalTo(-80)
+            make.left.equalTo(10)
+//            make.centerX.equalToSuperview()
+            make.size.equalTo(CGSize(width: 60, height: 60))
+        }
+        recordButton.backgroundColor = .red
+        recordButton.setTitle("录制", for: .normal)
+        recordButton.layer.cornerRadius = 30
+        return recordButton
+    }()
+    
+    private let recordQueue = DispatchQueue(label: "com.pkh.recordQueue")
+    
+    private var cameraRecorder: PCameraRecorder?
 
     // MARK: - Life Cycle
     override func viewDidLoad() {
@@ -88,16 +121,21 @@ class MetalLutObjCameraVC: MetalBasicVC {
                                y: 44,
                                width: UIScreen.main.bounds.size.width,
                                height: UIScreen.main.bounds.size.width / 9.0 * 16.0)
-        mtkView.framebufferOnly = false
-        mtkView.isPaused = true
+//        mtkView.framebufferOnly = false
+//        mtkView.isPaused = true
         mtkView.delegate = self
+        
+        collectionView.reloadData()
+        slider.value = 1;
         
         cameraManager.delegate = self
         cameraManager.prepare()
         setupMetal()
         
-        collectionView.reloadData()
-        slider.value = 1;
+        recordButton.addTarget(self, action: #selector(recordClick), for: .touchUpInside)
+        
+        viewWidth = UIScreen.main.bounds.size.width
+        viewHeight = UIScreen.main.bounds.size.width / 9.0 * 16.0
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -126,6 +164,47 @@ class MetalLutObjCameraVC: MetalBasicVC {
         saturation = slider.value
     }
     
+    @objc func recordClick(_ sender: UIButton) {
+        sender.isEnabled = false
+        
+        recordQueue.async {
+            defer {
+                DispatchQueue.main.async {
+                    sender.isEnabled = true
+                    
+                    if let recorder = self.cameraRecorder {
+                        sender.setTitle(recorder.isRecording ? "停止" : "录制", for: .normal)
+                    }
+                }
+            }
+            
+            let isRecording = self.cameraRecorder?.isRecording ?? false
+            if !isRecording {
+                guard let audioSettings = self.cameraManager.audioSetting() else {
+                    print("Could not create audio settings")
+                    return
+                }
+                
+                guard let videoSettings = self.cameraManager.videoSetting() else {
+                    print("Could not create video settings")
+                    return
+                }
+                
+                guard let videoTransform = self.cameraManager.videoTransform() else {
+                    print("Could not create video transform")
+                    return
+                }
+                
+                self.cameraRecorder = PCameraRecorder(audioSettings: audioSettings, videoSettings: videoSettings, videoTransform: videoTransform)
+                self.cameraRecorder?.startRecording()
+            } else {
+                self.cameraRecorder?.stopRecording(completion: { movieURL in
+                    PCameraUtils.saveMovieToPhotoLibrary(movieURL)
+                })
+            }
+        }
+    }
+    
     // MARK: - Method
     
     /// Metal配置
@@ -140,10 +219,10 @@ class MetalLutObjCameraVC: MetalBasicVC {
     func setupVertex() {
         /// 顶点坐标x、y、z、w
         let vertextData:[Float] = [
-            -1.0, -1.0, 0.0, 1.0, 0.0, 1.0,
-             -1.0, 1.0, 0.0, 1.0, 0.0, 0.0,
-             1.0, -1.0, 0.0, 1.0, 1.0, 1.0,
-             1.0, 1.0, 0.0, 1.0, 1.0, 0.0,
+            -1.0, -1.0, 0.0,
+             -1.0, 1.0, 0.0,
+             1.0, -1.0, 0.0,
+             1.0, 1.0, 0.0,
         ]
         
         // 创建顶点缓冲区
@@ -154,9 +233,9 @@ class MetalLutObjCameraVC: MetalBasicVC {
     func setupPipeline() {
         let library = metalContext.library
         // 顶点shader，texture_vertex_main是函数名
-        let vertexFuction = library?.makeFunction(name: "lut_texture_vertex")
+        let vertexFuction = library?.makeFunction(name: "texture_vertex_main")
         // 片元shader，texture_fragment_main是函数名
-        let fragmentFunction = library?.makeFunction(name: "lut_texture_fragment_two")
+        let fragmentFunction = library?.makeFunction(name: "texture_fragment_main")
         
         let pipelineDes = MTLRenderPipelineDescriptor()
         pipelineDes.vertexFunction = vertexFuction
@@ -199,14 +278,68 @@ class MetalLutObjCameraVC: MetalBasicVC {
         lutFilter?.lutImage = image
     }
     
-    /// 渲染
-    func render(with texture: MTLTexture) {
-        guard let metalLayer = mtkView.layer as? CAMetalLayer else {
-            HSLog("metalLayer get fail")
+    /// 准备渲染
+    func prepareRender(with videoFormatDescription: CMFormatDescription, outputRetainedBufferCountHint: Int) {
+        (outputPixelBufferPool, _, _) = PCameraUtils.allocateOutputBufferPool(with: videoFormatDescription,
+                                                                                                    outputRetainedBufferCountHint: outputRetainedBufferCountHint)
+        
+        if outputPixelBufferPool == nil {
+            HSLog("像素缓冲池创建失败")
             return
         }
-
-        guard let drawable = metalLayer.nextDrawable() else {
+        
+        isPrepared = true
+    }
+    
+    /// 滤镜渲染
+    func lutRender(with pixelBuffer: CVPixelBuffer) -> CVPixelBuffer? {
+        guard isPrepared, let outputPixelBufferPool = outputPixelBufferPool else {
+            assertionFailure("Invalid state: Not prepared")
+            return nil
+        }
+        
+        var newPixelBuffer: CVPixelBuffer?
+        CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, outputPixelBufferPool, &newPixelBuffer)
+        guard let outputPixelBuffer = newPixelBuffer else {
+            print("Allocation failure: Could not get pixel buffer from pool (\(self.description))")
+            return nil
+        }
+        
+        guard let inputTexture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: pixelBuffer),
+              let outputTexture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: outputPixelBuffer)else {
+            return nil
+        }
+        
+        // 获取命令缓冲区
+        guard let commandBuffer = metalContext.commandQueue.makeCommandBuffer() else {
+            HSLog("CommandBuffer make fail")
+            return nil
+        }
+        
+        lutFilter?.rect = CGRect(x: 0, y: 0, width: Int(clipSizeX / viewWidth * CGFloat(inputTexture.width)), height: inputTexture.height)
+        lutFilter?.encode(commandBuffer: commandBuffer, sourceTexture: inputTexture, destinationTexture: outputTexture)
+        
+        // 提交
+        commandBuffer.commit()
+        
+        texture = outputTexture
+        
+        return outputPixelBuffer
+    }
+    
+    /// 渲染
+    func render(with texture: MTLTexture) {
+//        guard let metalLayer = mtkView.layer as? CAMetalLayer else {
+//            HSLog("metalLayer get fail")
+//            return
+//        }
+//
+//        guard let drawable = metalLayer.nextDrawable() else {
+//            HSLog("drawable get fail")
+//            return
+//        }
+        
+        guard let drawable = mtkView.currentDrawable else {
             HSLog("drawable get fail")
             return
         }
@@ -217,37 +350,34 @@ class MetalLutObjCameraVC: MetalBasicVC {
             return
         }
         
-        lutFilter?.rect = CGRect(x: 0, y: 0, width: Int(clipSizeX / view.frame.width * CGFloat(texture.width)), height: texture.height)
-        lutFilter?.encode(commandBuffer: commandBuffer, sourceTexture: texture, destinationTexture: drawable.texture)
+        // 获取过程描述符, MTLRenderPassDescriptor描述一系列attachments的值，类似GL的FrameBuffer；同时也用来创建MTLRenderCommandEncoder
+        guard let passDescriptor = mtkView.currentRenderPassDescriptor else {
+            HSLog("passDescriptor get fail")
+            return
+        }
+        
+        // 配置编码渲染命令
+        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: passDescriptor) else {
+            HSLog("RenderEncoder make fail")
+            return
+        }
+        // 设置渲染管道，以保证顶点和片元两个shader会被调用
+        renderEncoder.setRenderPipelineState(pipelineState)
+        // 设置顶点缓存
+        renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+        // 设置片段纹理
+        renderEncoder.setFragmentTexture(texture, index: 0)
+        // 设置片段采样状态
+        renderEncoder.setFragmentSamplerState(samplerState, index: 0)
+        // 绘制显示区域
+        renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+        // 完成向渲染命令编码器发送命令并完成帧
+        renderEncoder.endEncoding()
         
         // 显示
         commandBuffer.present(drawable)
         // 提交
         commandBuffer.commit()
-    }
-    
-    // MARK: - Private Method
-    
-    /// 获取图片数据
-    func loadImage(with image: UIImage) -> UnsafeMutableRawPointer {
-        
-        guard let cgImage = image.cgImage else {
-            print("没有获取到图片的cgImage")
-            return UnsafeMutableRawPointer.allocate(byteCount: 0, alignment: 0)
-        }
-        
-        let width = cgImage.width
-        let height = cgImage.height
-        
-        guard let data = calloc(width * height * 4, MemoryLayout<UInt8>.size) else {
-            print("data创建失败")
-            return UnsafeMutableRawPointer.allocate(byteCount: 0, alignment: 0)
-        }
-        
-        let context = CGContext(data: data, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)
-        context?.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
-        
-        return data
     }
 
 }
@@ -255,14 +385,42 @@ class MetalLutObjCameraVC: MetalBasicVC {
 // MARK: - 相机代理
 extension MetalLutObjCameraVC: CameraManagerDelegate {
     
-    func captureOutput(didOutput sampleBuffer: CMSampleBuffer) {
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+    func videoCaptureOutput(didOutput sampleBuffer: CMSampleBuffer, fromOutput videoDataOutput: AVCaptureVideoDataOutput) {
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+            return
+        }
         
-        texture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: pixelBuffer)
+        if videoTrackSourceFormatDescription == nil {
+            videoTrackSourceFormatDescription = CMSampleBufferGetFormatDescription(sampleBuffer)
+        }
         
-//        DispatchQueue.main.async {
-            self.mtkView.draw()
-//        }
+        if !isPrepared {
+            guard let formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer) else {
+                return
+            }
+            prepareRender(with: formatDescription, outputRetainedBufferCountHint: 3)
+        }
+        
+        guard let lutPixelBuffer = lutRender(with: pixelBuffer) else {
+            print("Unable to combine video")
+            return
+        }
+        
+        if let recorder = cameraRecorder, recorder.isRecording, let videoTrackSourceFormatDescription = videoTrackSourceFormatDescription {
+            guard let finalVideoSampleBuffer = PCameraUtils.videoSampleBufferWithPixelBuffer(with: lutPixelBuffer,
+                                                                                             videoTrackSourceFormatDescription: videoTrackSourceFormatDescription,
+                                                                                             presentationTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) else {
+                print("Error: Unable to create sample buffer from pixelbuffer")
+                return
+            }
+            
+            recorder.recordVideo(sampleBuffer: finalVideoSampleBuffer)
+        }
+        
+    }
+    
+    func audioCaptureOutput(didOutput sampleBuffer: CMSampleBuffer, fromOutput audioDataOutput: AVCaptureAudioDataOutput) {
+        
     }
     
 }
@@ -278,9 +436,7 @@ extension MetalLutObjCameraVC: MTKViewDelegate {
     func draw(in view: MTKView) {
         guard let texture = self.texture else { return }
         
-        DispatchQueue.main.async {
-            self.render(with: texture)
-        }
+        self.render(with: texture)
     }
     
 }

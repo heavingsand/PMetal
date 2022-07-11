@@ -34,7 +34,6 @@
 		9D6F3350271440AD003E00D9 /* PMetalContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6F334F271440AD003E00D9 /* PMetalContext.swift */; };
 		9D6F3352271440FD003E00D9 /* PMetalLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6F3351271440FD003E00D9 /* PMetalLayer.swift */; };
 		9D6F33542714415C003E00D9 /* 绘制矩形.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6F33532714415C003E00D9 /* 绘制矩形.swift */; };
-		9D7061E326244B730016653A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 9D7061E226244B730016653A /* Alamofire */; };
 		9D7061E726244BFA0016653A /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 9D7061E626244BFA0016653A /* Kingfisher */; };
 		9D8C268526F591E10090153D /* primitive.obj in Resources */ = {isa = PBXBuildFile; fileRef = 9D8C268326F591E10090153D /* primitive.obj */; };
 		9D8C268626F591E10090153D /* primitive.mtl in Resources */ = {isa = PBXBuildFile; fileRef = 9D8C268426F591E10090153D /* primitive.mtl */; };
@@ -49,6 +48,7 @@
 		9DC9D530279AB2DE007E7578 /* 相机预览.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC9D52F279AB2DE007E7578 /* 相机预览.swift */; };
 		9DC9D533279AB823007E7578 /* PCameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC9D532279AB823007E7578 /* PCameraManager.swift */; };
 		9DC9D535279ABB45007E7578 /* PCameraAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC9D534279ABB45007E7578 /* PCameraAuthorization.swift */; };
+		9DCF055028646D9500AA207A /* PCameraUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCF054F28646D9500AA207A /* PCameraUtils.swift */; };
 		9DE3997627857BF90020A937 /* Lut图片滤镜.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE3997527857BF90020A937 /* Lut图片滤镜.swift */; };
 		9DE3997A2785A9120020A937 /* LutFilter.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9DE399792785A9120020A937 /* LutFilter.metal */; };
 		9DE93E21277B0635009D8227 /* MetalGuide.md in Resources */ = {isa = PBXBuildFile; fileRef = 9DE93E20277B0635009D8227 /* MetalGuide.md */; };
@@ -95,6 +95,7 @@
 		9DC9D52F279AB2DE007E7578 /* 相机预览.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "相机预览.swift"; sourceTree = "<group>"; };
 		9DC9D532279AB823007E7578 /* PCameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PCameraManager.swift; sourceTree = "<group>"; };
 		9DC9D534279ABB45007E7578 /* PCameraAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PCameraAuthorization.swift; sourceTree = "<group>"; };
+		9DCF054F28646D9500AA207A /* PCameraUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PCameraUtils.swift; sourceTree = "<group>"; };
 		9DE3997527857BF90020A937 /* Lut图片滤镜.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Lut图片滤镜.swift"; sourceTree = "<group>"; };
 		9DE399792785A9120020A937 /* LutFilter.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = LutFilter.metal; sourceTree = "<group>"; };
 		9DE93E20277B0635009D8227 /* MetalGuide.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = MetalGuide.md; sourceTree = "<group>"; };
@@ -106,7 +107,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9D65DEA52615B60F0054724A /* SnapKit in Frameworks */,
-				9D7061E326244B730016653A /* Alamofire in Frameworks */,
 				9D105E7F2616FAA8006667CB /* CombineCocoa in Frameworks */,
 				9D65DEAF2615D3470054724A /* CombineDataSources in Frameworks */,
 				9D7061E726244BFA0016653A /* Kingfisher in Frameworks */,
@@ -217,6 +217,7 @@
 				9DC85F872852F96E00B9FBE3 /* PCameraMultiManager.swift */,
 				9DC9D534279ABB45007E7578 /* PCameraAuthorization.swift */,
 				9D26AC2327F83C4100C84F77 /* PCameraExtension.swift */,
+				9DCF054F28646D9500AA207A /* PCameraUtils.swift */,
 			);
 			path = PCamera;
 			sourceTree = "<group>";
@@ -265,7 +266,6 @@
 				9D65DEA42615B60F0054724A /* SnapKit */,
 				9D65DEAE2615D3470054724A /* CombineDataSources */,
 				9D105E7E2616FAA8006667CB /* CombineCocoa */,
-				9D7061E226244B730016653A /* Alamofire */,
 				9D7061E626244BFA0016653A /* Kingfisher */,
 			);
 			productName = PanSwift;
@@ -360,6 +360,7 @@
 				9D8C268D26F59C830090153D /* 加载本地模型.swift in Sources */,
 				9D5EF1E526F2F7FF00D94537 /* TextureRenderer.metal in Sources */,
 				9D6BE4AE2851FE7E00AADD52 /* 多镜头相机.swift in Sources */,
+				9DCF055028646D9500AA207A /* PCameraUtils.swift in Sources */,
 				9DC2E29E26EF38CA00EB47C4 /* HSLog.swift in Sources */,
 				9DC85F882852F96E00B9FBE3 /* PCameraMultiManager.swift in Sources */,
 				9D8C268B26F59A430090153D /* MetalBasicVC.swift in Sources */,
@@ -513,9 +514,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = PXELK7HF2H;
+				DEVELOPMENT_TEAM = DQFEA2B5H2;
 				INFOPLIST_FILE = "PanSwift/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -536,9 +538,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = PXELK7HF2H;
+				DEVELOPMENT_TEAM = DQFEA2B5H2;
 				INFOPLIST_FILE = "PanSwift/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -634,11 +637,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9D65DEAD2615D3470054724A /* XCRemoteSwiftPackageReference "CombineDataSources" */;
 			productName = CombineDataSources;
-		};
-		9D7061E226244B730016653A /* Alamofire */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9D7061E126244B730016653A /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = Alamofire;
 		};
 		9D7061E626244BFA0016653A /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;

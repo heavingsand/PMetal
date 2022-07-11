@@ -9,6 +9,7 @@ import UIKit
 import MetalKit
 import CoreMedia
 import CoreGraphics
+import Photos
 
 /// Lut滤镜参数配置
 //struct LutFilterParameters {
@@ -223,7 +224,7 @@ class MetalRenderCameraVC: MetalBasicVC {
         }
 
         let region = MTLRegionMake2D(0, 0, Int(image.size.width), Int(image.size.height))
-        let data = loadImage(with: image)
+        let data = PCameraUtils.loadImageBytes(with: image)
         lutTexture?.replace(region: region, mipmapLevel: 0, withBytes: data, bytesPerRow: 4 * Int(image.size.width))
         data.deallocate()
     }
@@ -285,40 +286,20 @@ class MetalRenderCameraVC: MetalBasicVC {
         // 提交
         commandBuffer.commit()
     }
-    
-    // MARK: - Private Method
-    
-    /// 获取图片数据
-    func loadImage(with image: UIImage) -> UnsafeMutableRawPointer {
-        
-        guard let cgImage = image.cgImage else {
-            print("没有获取到图片的cgImage")
-            return UnsafeMutableRawPointer.allocate(byteCount: 0, alignment: 0)
-        }
-        
-        let width = cgImage.width
-        let height = cgImage.height
-        
-        guard let data = calloc(width * height * 4, MemoryLayout<UInt8>.size) else {
-            print("data创建失败")
-            return UnsafeMutableRawPointer.allocate(byteCount: 0, alignment: 0)
-        }
-        
-        let context = CGContext(data: data, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)
-        context?.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
-        
-        return data
-    }
 
 }
 
 // MARK: - 相机代理
 extension MetalRenderCameraVC: CameraManagerDelegate {
     
-    func captureOutput(didOutput sampleBuffer: CMSampleBuffer) {
+    func videoCaptureOutput(didOutput sampleBuffer: CMSampleBuffer, fromOutput videoDataOutput: AVCaptureVideoDataOutput) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         
         texture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: pixelBuffer)
+    }
+    
+    func audioCaptureOutput(didOutput sampleBuffer: CMSampleBuffer, fromOutput audioDataOutput: AVCaptureAudioDataOutput) {
+        
     }
     
 }

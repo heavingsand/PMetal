@@ -12,6 +12,11 @@ import Photos
 
 class MetalMultiCameraVC: MetalBasicVC {
     
+    struct MixerParameters {
+        var pipPosition: SIMD2<Float>
+        var pipSize: SIMD2<Float>
+    }
+    
     // MARK: - Property
     
     let cameraManager = PCameraMultiManager()
@@ -64,8 +69,10 @@ class MetalMultiCameraVC: MetalBasicVC {
     /// 像素缓冲池
     private var outputPixelBufferPool: CVPixelBufferPool?
     
+    /// 视频描述对象
     private var videoTrackSourceFormatDescription: CMFormatDescription?
     
+    /// 当前画中画buffer
     private var currentPiPSampleBuffer: CVImageBuffer?
 
     // MARK: - Life Cycle
@@ -97,6 +104,8 @@ class MetalMultiCameraVC: MetalBasicVC {
         
         cameraManager.stopRunning()
     }
+    
+    // MARK: - Event
     
     @objc func recordClick(_ sender: UIButton) {
         sender.isEnabled = false
@@ -133,7 +142,7 @@ class MetalMultiCameraVC: MetalBasicVC {
                 self.cameraRecorder?.startRecording()
             } else {
                 self.cameraRecorder?.stopRecording(completion: { movieURL in
-                    self.saveMovieToPhotoLibrary(movieURL)
+                    PCameraUtils.saveMovieToPhotoLibrary(movieURL)
                 })
             }
         }
@@ -214,7 +223,7 @@ class MetalMultiCameraVC: MetalBasicVC {
     
     /// 准备画中画
     func preparePipMixer(with videoFormatDescription: CMFormatDescription, outputRetainedBufferCountHint: Int) {
-        (outputPixelBufferPool, _, outputFormatDescription) = cameraManager.allocateOutputBufferPool(with: videoFormatDescription,
+        (outputPixelBufferPool, _, outputFormatDescription) = PCameraUtils.allocateOutputBufferPool(with: videoFormatDescription,
                                                                                                      outputRetainedBufferCountHint: outputRetainedBufferCountHint)
         
         if outputPixelBufferPool == nil {
@@ -225,16 +234,11 @@ class MetalMultiCameraVC: MetalBasicVC {
         isPrepared = true
     }
     
-    struct MixerParameters {
-        var pipPosition: SIMD2<Float>
-        var pipSize: SIMD2<Float>
-    }
-    
+    /// 混合buffer
     func mix(fullScreenPixelBuffer: CVPixelBuffer, pipPixelBuffer: CVPixelBuffer, fullScreenPixelBufferIsFrontCamera: Bool) -> CVPixelBuffer? {
-        guard isPrepared,
-            let outputPixelBufferPool = outputPixelBufferPool else {
-                assertionFailure("Invalid state: Not prepared")
-                return nil
+        guard isPrepared, let outputPixelBufferPool = outputPixelBufferPool else {
+            assertionFailure("Invalid state: Not prepared")
+            return nil
         }
         
         var newPixelBuffer: CVPixelBuffer?
@@ -247,7 +251,7 @@ class MetalMultiCameraVC: MetalBasicVC {
         guard let outputTexture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: outputPixelBuffer),
               let fullScreenTexture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: fullScreenPixelBuffer),
               let pipTexture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: pipPixelBuffer) else {
-                return nil
+            return nil
         }
         
         let pipPosition = SIMD2(Float(pipFrame.origin.x) * Float(fullScreenTexture.width), Float(pipFrame.origin.y) * Float(fullScreenTexture.height))
@@ -283,37 +287,13 @@ class MetalMultiCameraVC: MetalBasicVC {
                                           height: (fullScreenTexture.height + height - 1) / height,
                                           depth: 1)
         commandEncoder.dispatchThreadgroups(threadgroupsPerGrid, threadsPerThreadgroup: threadsPerThreadgroup)
-        
         commandEncoder.endEncoding()
+        
         commandBuffer.commit()
         
         texture = outputTexture
         
         return outputPixelBuffer
-    }
-    
-    /// CVPixelBuffer转CMSampleBuffer
-    private func createVideoSampleBufferWithPixelBuffer(_ pixelBuffer: CVPixelBuffer, presentationTime: CMTime) -> CMSampleBuffer? {
-        guard let videoTrackSourceFormatDescription = videoTrackSourceFormatDescription else {
-            return nil
-        }
-        
-        var sampleBuffer: CMSampleBuffer?
-        var timingInfo = CMSampleTimingInfo(duration: .invalid, presentationTimeStamp: presentationTime, decodeTimeStamp: .invalid)
-        
-        let err = CMSampleBufferCreateForImageBuffer(allocator: kCFAllocatorDefault,
-                                                     imageBuffer: pixelBuffer,
-                                                     dataReady: true,
-                                                     makeDataReadyCallback: nil,
-                                                     refcon: nil,
-                                                     formatDescription: videoTrackSourceFormatDescription,
-                                                     sampleTiming: &timingInfo,
-                                                     sampleBufferOut: &sampleBuffer)
-        if sampleBuffer == nil {
-            print("Error: Sample buffer creation failed (error code: \(err))")
-        }
-        
-        return sampleBuffer
     }
     
     /// 渲染
@@ -361,41 +341,6 @@ class MetalMultiCameraVC: MetalBasicVC {
         commandBuffer.commit()
     }
     
-    /// 保存视频到相册
-    private func saveMovieToPhotoLibrary(_ movieURL: URL) {
-        PHPhotoLibrary.requestAuthorization { status in
-            if status == .authorized {
-                // Save the movie file to the photo library and clean up.
-                PHPhotoLibrary.shared().performChanges({
-                    let options = PHAssetResourceCreationOptions()
-                    options.shouldMoveFile = true
-                    let creationRequest = PHAssetCreationRequest.forAsset()
-                    creationRequest.addResource(with: .video, fileURL: movieURL, options: options)
-                }, completionHandler: { success, error in
-                    if !success {
-                        print("\(Bundle.main.applicationName) couldn't save the movie to your photo library: \(String(describing: error))")
-                    } else {
-                        // Clean up
-                        if FileManager.default.fileExists(atPath: movieURL.path) {
-                            do {
-                                try FileManager.default.removeItem(atPath: movieURL.path)
-                            } catch {
-                                print("Could not remove file at url: \(movieURL)")
-                            }
-                        }
-                    }
-                })
-            } else {
-                DispatchQueue.main.async {
-                    let alertMessage = "Alert message when the user has not authorized photo library access"
-                    let message = NSLocalizedString("\(Bundle.main.applicationName) does not have permission to access the photo library", comment: alertMessage)
-                    let alertController = UIAlertController(title: Bundle.main.applicationName, message: message, preferredStyle: .alert)
-                    self.present(alertController, animated: true, completion: nil)
-                }
-            }
-        }
-    }
-    
 }
 
 // MARK: - 相机代理
@@ -437,9 +382,10 @@ extension MetalMultiCameraVC: MultiCameraManagerDelegate {
                                                             return
             }
             
-            if let recorder = cameraRecorder, recorder.isRecording {
-                guard let finalVideoSampleBuffer = createVideoSampleBufferWithPixelBuffer(mixedPixelBuffer,
-                                                                                          presentationTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) else {
+            if let recorder = cameraRecorder, recorder.isRecording, let videoTrackSourceFormatDescription = videoTrackSourceFormatDescription {
+                guard let finalVideoSampleBuffer = PCameraUtils.videoSampleBufferWithPixelBuffer(with: mixedPixelBuffer,
+                                                                                                 videoTrackSourceFormatDescription: videoTrackSourceFormatDescription,
+                                                                                                 presentationTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) else {
                     print("Error: Unable to create sample buffer from pixelbuffer")
                     return
                 }
@@ -450,7 +396,9 @@ extension MetalMultiCameraVC: MultiCameraManagerDelegate {
     }
     
     func audioCaptureOutput(didOutput sampleBuffer: CMSampleBuffer, fromOutput audioDataOutput: AVCaptureAudioDataOutput) {
-        
+        if let recorder = cameraRecorder, recorder.isRecording {
+            recorder.recordAudio(sampleBuffer: sampleBuffer)
+        }
     }
     
 }

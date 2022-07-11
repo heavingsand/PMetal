@@ -15,7 +15,7 @@ struct MixerParameters
     float2 pipSize;
 };
 
-constant sampler kBilinearSampler(filter::linear,  coord::pixel, address::clamp_to_edge);
+constant sampler kBilinearSampler(filter::linear, coord::pixel, address::clamp_to_edge);
 
 /// 画中画并行计算函数
 kernel void pipMixer(texture2d<half, access::read> fullScreenInput [[texture(0)]],  // 全屏纹理

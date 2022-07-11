@@ -226,26 +226,4 @@ class MetalRenderImageVC: MetalBasicVC {
         commandBuffer.commit()
     }
     
-    /// 获取图片数据
-    func loadImage(with image: UIImage) -> UnsafeMutableRawPointer {
-        
-        guard let cgImage = image.cgImage else {
-            print("没有获取到图片的cgImage")
-            return UnsafeMutableRawPointer.allocate(byteCount: 0, alignment: 0)
-        }
-        
-        let width = cgImage.width
-        let height = cgImage.height
-        
-        guard let data = calloc(width * height * 4, MemoryLayout<UInt8>.size) else {
-            print("data创建失败")
-            return UnsafeMutableRawPointer.allocate(byteCount: 0, alignment: 0)
-        }
-        
-        let context = CGContext(data: data, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)
-        context?.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
-        
-        return data
-    }
-    
 }

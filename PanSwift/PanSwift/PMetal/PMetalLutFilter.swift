@@ -31,30 +31,46 @@ class PMetalLutFilter: MPSUnaryImageKernel {
         set {
             _lutImage = newValue
             
-            guard let cgImage = lutImage.cgImage else {
-                print("没有获取到图片的cgImage")
-                return
+//            guard let cgImage = lutImage.cgImage else {
+//                print("没有获取到图片的cgImage")
+//                return
+//            }
+//
+//            let width = cgImage.width
+//            let height = cgImage.height
+//
+//            guard let data = calloc(width * height * 4, MemoryLayout<UInt8>.size) else {
+//                print("data创建失败")
+//                return
+//            }
+//
+//            let context = CGContext(data: data,
+//                                    width: width,
+//                                    height: height,
+//                                    bitsPerComponent: 8,
+//                                    bytesPerRow: width * 4,
+//                                    space: CGColorSpaceCreateDeviceRGB(),
+//                                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)
+//            context?.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+//
+//            let region = MTLRegionMake2D(0, 0, Int(lutImage.size.width), Int(lutImage.size.height))
+//            lutTexture.replace(region: region, mipmapLevel: 0, withBytes: data, bytesPerRow: 4 * Int(lutImage.size.width))
+//            data.deallocate()
+            
+            if lutTexture == nil {
+                // 创建纹理描述符
+                let textureDes = MTLTextureDescriptor()
+                textureDes.pixelFormat = .bgra8Unorm
+                textureDes.width = Int(_lutImage.size.width)
+                textureDes.height = Int(_lutImage.size.height)
+                textureDes.usage = .shaderRead
+                
+                lutTexture = device.makeTexture(descriptor: textureDes)
             }
             
-            let width = cgImage.width
-            let height = cgImage.height
-            
-            guard let data = calloc(width * height * 4, MemoryLayout<UInt8>.size) else {
-                print("data创建失败")
-                return
-            }
-            
-            let context = CGContext(data: data,
-                                    width: width,
-                                    height: height,
-                                    bitsPerComponent: 8,
-                                    bytesPerRow: width * 4,
-                                    space: CGColorSpaceCreateDeviceRGB(),
-                                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)
-            context?.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
-            
-            let region = MTLRegionMake2D(0, 0, Int(lutImage.size.width), Int(lutImage.size.height))
-            lutTexture.replace(region: region, mipmapLevel: 0, withBytes: data, bytesPerRow: 4 * Int(lutImage.size.width))
+            let region = MTLRegionMake2D(0, 0, Int(_lutImage.size.width), Int(_lutImage.size.height))
+            let data = PCameraUtils.loadImageBytes(with: _lutImage)
+            lutTexture?.replace(region: region, mipmapLevel: 0, withBytes: data, bytesPerRow: 4 * Int(_lutImage.size.width))
             data.deallocate()
         }
     }
@@ -80,8 +96,7 @@ class PMetalLutFilter: MPSUnaryImageKernel {
     private var samplerState: MTLSamplerState!
 
     // 纹理
-    private var lutTexture: MTLTexture!
-    
+    private var lutTexture: MTLTexture?
     
     override init(device: MTLDevice) {
         super .init(device: device)
@@ -95,9 +110,9 @@ class PMetalLutFilter: MPSUnaryImageKernel {
         self.pipelineState = pipelineState
 
         // 初始化lut纹理
-        let textureDes = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm, width: 512, height: 512, mipmapped: false)
-        guard let lutTexture = device.makeTexture(descriptor: textureDes) else { return }
-        self.lutTexture = lutTexture
+//        let textureDes = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm, width: 512, height: 512, mipmapped: false)
+//        guard let lutTexture = device.makeTexture(descriptor: textureDes) else { return }
+//        self.lutTexture = lutTexture
         
         // 初始化采样状态
         let samplerDes = MTLSamplerDescriptor()
@@ -132,7 +147,6 @@ class PMetalLutFilter: MPSUnaryImageKernel {
         // 网格大小
         let threadsPerGroup = MTLSizeMake(width, height, 1)
         let threadsPerGrid = MTLSize(width: (sourceTexture.width + width - 1) / width, height: (sourceTexture.height + height - 1) / height, depth: 1)
-//        let threadsPerGrid = MTLSize(width: sourceTexture.width, height: sourceTexture.height + height, depth: 1)
         
         // 配置编码渲染命令
         guard let encoder = commandBuffer.makeComputeCommandEncoder() else {
