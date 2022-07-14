@@ -78,4 +78,24 @@ class PMetalContext {
         return texture
     }
     
+    func makeTextureFromCVPixelBuffer(pixelBuffer: CVPixelBuffer, pixelFormat: MTLPixelFormat) -> MTLTexture? {
+        let width = CVPixelBufferGetWidth(pixelBuffer)
+        let height = CVPixelBufferGetHeight(pixelBuffer)
+        
+        // Create a Metal texture from the image buffer
+        var tmpTextureOut: CVMetalTexture?
+        // 如果MTLPixelFormatBGRA8Unorm和摄像头采集时设置的颜色格式不一致，则会出现图像异常的情况
+        let status = CVMetalTextureCacheCreateTextureFromImage(kCFAllocatorDefault, textureCache, pixelBuffer, nil, pixelFormat, width, height, 0, &tmpTextureOut)
+        guard status == kCVReturnSuccess,
+              let textureOut = tmpTextureOut,
+              let texture = CVMetalTextureGetTexture(textureOut)
+        else {
+            HSLog("Video failed to create texture")
+            CVMetalTextureCacheFlush(textureCache, 0)
+            return nil
+        }
+        
+        return texture
+    }
+    
 }

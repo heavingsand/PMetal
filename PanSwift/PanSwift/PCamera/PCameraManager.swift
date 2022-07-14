@@ -21,12 +21,20 @@ public protocol CameraManagerDelegate: AnyObject {
     ///   - sampleBuffer: buffer
     ///   - audioDataOutput: 音频output
     func audioCaptureOutput(didOutput sampleBuffer: CMSampleBuffer, fromOutput audioDataOutput: AVCaptureAudioDataOutput)
+    
+    /// 视频和深度数据同步输出
+    /// - Parameters:
+    ///   - videoSampleBuffer: 视频数据
+    ///   - depthPixelBuffer: 深度数据
+    func videoOutputSynchronizer(didOutput videoSampleBuffer: CMSampleBuffer, depthPixelBuffer: CVPixelBuffer)
 }
 
 public extension CameraManagerDelegate {
     func videoCaptureOutput(didOutput sampleBuffer: CMSampleBuffer, fromOutput videoDataOutput: AVCaptureVideoDataOutput) {}
     
     func audioCaptureOutput(didOutput sampleBuffer: CMSampleBuffer, fromOutput audioDataOutput: AVCaptureAudioDataOutput) {}
+    
+    func videoOutputSynchronizer(didOutput videoSampleBuffer: CMSampleBuffer, depthPixelBuffer: CVPixelBuffer) {}
 }
 
 public final class PCameraManager: NSObject {
@@ -42,27 +50,38 @@ public final class PCameraManager: NSObject {
     // MARK: - Property
     public weak var delegate: CameraManagerDelegate?
     
-    let session = AVCaptureSession()
+    /// 摄像头类型
+    public var deviceType: AVCaptureDevice.DeviceType = .builtInWideAngleCamera
     
-    let sessionQueue = DispatchQueue(label: "com.pan.cameraManager.sessionQueue")
+    /// 摄像头位置
+    public var devicePosition: AVCaptureDevice.Position = .back
     
-    var captureDevice: AVCaptureDevice!
+    /// 当前使用的摄像头
+    private var captureDevice: AVCaptureDevice!
     
-    var videoDeviceInput: AVCaptureDeviceInput!
+    /// 设备管道
+    private let session = AVCaptureSession()
     
-    let videoDataOutput = AVCaptureVideoDataOutput()
-    
-    var audioDataInput: AVCaptureDeviceInput!
-    
-    let audioDataOutput = AVCaptureAudioDataOutput()
-    
-    let dataOutputQueue = DispatchQueue(label: "com.pan.cameraManager.videoDataOutputQueue")
-    
+    /// Session配置状态
     private var setupResult: SessionSetupResult = .success
     
-    private var isSessionRunning = false
-    
+    /// 用于记录配置的开始/提交
     private var beginSessionConfigurationCount = 0;
+    
+    /// 队列
+    private let sessionQueue = DispatchQueue(label: "com.pan.cameraManager.sessionQueue")
+    private let dataOutputQueue = DispatchQueue(label: "com.pan.cameraManager.videoDataOutputQueue")
+    
+    private var videoDeviceInput: AVCaptureDeviceInput!
+    private let videoDataOutput = AVCaptureVideoDataOutput()
+    
+    private var audioDeviceInput: AVCaptureDeviceInput!
+    private let audioDataOutput = AVCaptureAudioDataOutput()
+    
+    private let depthDataOutput = AVCaptureDepthDataOutput()
+    
+    /// 同步视频数据和深度数据的输出
+    private var outputSynchronizer: AVCaptureDataOutputSynchronizer?
     
     // MARK: - Life Cycle
     override init() {
@@ -130,27 +149,19 @@ extension PCameraManager {
             return
         }
         
-        // 配置input
-//        let deviceTypes: [AVCaptureDevice.DeviceType] = [.builtInWideAngleCamera,
-//                                                         .builtInTelephotoCamera,
-//                                                         .builtInDualCamera,
-//                                                         .builtInTrueDepthCamera,
-//                                                         .builtInUltraWideCamera,
-//                                                         .builtInDualWideCamera,
-//                                                         .builtInTripleCamera
-//        ]
-//
-//        let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: deviceTypes, mediaType: .video, position: .unspecified)
-        let defaultVideoDevice = AVCaptureDevice.default(for: .video)
-        
-        guard let videoDevice = defaultVideoDevice else {
-            HSLog("🤔🤔Could not find any video device")
-            setupResult = .configurationFailed
-            return
+        beginConfiguration()
+        defer {
+            commitConfiguration()
         }
         
+        /// 配置video
+        guard let videoDevice = AVCaptureDevice.default(deviceType, for: .video, position: devicePosition) else {
+            setupResult = .configurationFailed
+            HSLog("🤔🤔Could not find any video device")
+            return
+        }
         captureDevice = videoDevice
-        
+
         do {
             videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
         } catch {
@@ -158,67 +169,104 @@ extension PCameraManager {
             setupResult = .configurationFailed
             return
         }
+
+        guard session.canAddInput(videoDeviceInput) else {
+            HSLog("🤔🤔Could not add video device input to the session")
+            setupResult = .configurationFailed
+            return
+        }
+        session.addInputWithNoConnections(videoDeviceInput)
+
+        guard let backInputPort = videoDeviceInput.ports(for: .video, sourceDeviceType: videoDevice.deviceType, sourceDevicePosition: videoDevice.position).first else {
+            HSLog("Could not find the back camera device input's video port")
+            setupResult = .configurationFailed
+            return
+        }
+
+        guard session.canAddOutput(videoDataOutput) else {
+            HSLog("Could not add the back camera video data output")
+            setupResult = .configurationFailed
+            return
+        }
+        session.addOutputWithNoConnections(videoDataOutput)
+        videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_32BGRA)]
+        videoDataOutput.setSampleBufferDelegate(self, queue: dataOutputQueue)
+
+        let deviceConnection = AVCaptureConnection(inputPorts: [backInputPort], output: videoDataOutput)
+        guard session.canAddConnection(deviceConnection) else {
+            print("Could not add a connection to the back camera video data output")
+            return
+        }
+        session.addConnection(deviceConnection)
+        deviceConnection.videoOrientation = .portrait
         
-        // Find the microphone
+        /// 配置audio
         guard let audioDevice = AVCaptureDevice.default(for: .audio) else {
             print("Could not find the microphone")
             return
         }
         
         do {
-            audioDataInput = try AVCaptureDeviceInput(device: audioDevice)
+            audioDeviceInput = try AVCaptureDeviceInput(device: audioDevice)
         } catch {
             HSLog("🤔🤔Could not create video device input: \(error)")
             setupResult = .configurationFailed
             return
         }
         
-        // 配置output
-        videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_32BGRA)]
-        videoDataOutput.setSampleBufferDelegate(self, queue: dataOutputQueue)
-        
-        audioDataOutput.setSampleBufferDelegate(self, queue: dataOutputQueue)
-        
-        // 配置session
-        beginConfiguration()
-        
-        session.sessionPreset = .iFrame1280x720
-        
-        // Add a video input
-        guard session.canAddInput(videoDeviceInput) else {
-            HSLog("🤔🤔Could not add video device input to the session")
-            setupResult = .configurationFailed
-            commitConfiguration()
-            return
-        }
-        session.addInput(videoDeviceInput)
-        
-        // Add a audio input
-        guard session.canAddInput(audioDataInput) else {
+        guard session.canAddInput(audioDeviceInput) else {
             HSLog("🤔🤔Could not add audio device input to the session")
             setupResult = .configurationFailed
-            commitConfiguration()
             return
         }
-        session.addInput(audioDataInput)
+        session.addInput(audioDeviceInput)
         
-        // Add a video data output
-        guard session.canAddOutput(videoDataOutput) else {
-            HSLog("🤔🤔Could not add videoDataOutput to the session")
-            setupResult = .configurationFailed
-            commitConfiguration()
-            return
-        }
-        session.addOutput(videoDataOutput)
-        
-        // Add a audio data output
         guard session.canAddOutput(audioDataOutput) else {
             HSLog("🤔🤔Could not add audioDataOutput to the session")
             setupResult = .configurationFailed
-            commitConfiguration()
             return
         }
         session.addOutput(audioDataOutput)
+        audioDataOutput.setSampleBufferDelegate(self, queue: dataOutputQueue)
+        
+        /// 配置深度通道
+        let depthFormats = videoDevice.activeFormat.supportedDepthDataFormats
+        let depth32formats = depthFormats.filter({
+            CMFormatDescriptionGetMediaSubType($0.formatDescription) == kCVPixelFormatType_DepthFloat16
+        })
+        
+        if depth32formats.isEmpty {
+            print("Device does not support Float32 depth format")
+            setupResult = .configurationFailed
+            return
+        }
+        
+        let selectedFormat = depth32formats.max(by: { first, second in
+            CMVideoFormatDescriptionGetDimensions(first.formatDescription).width < CMVideoFormatDescriptionGetDimensions(second.formatDescription).width })
+        
+        do {
+            try videoDevice.lockForConfiguration()
+            videoDevice.activeDepthDataFormat = selectedFormat
+            videoDevice.unlockForConfiguration()
+        } catch  {
+            print("Could not lock device for configuration: \(error)")
+            setupResult = .configurationFailed
+            return
+        }
+        
+        guard session.canAddOutput(depthDataOutput) else {
+            print("Could not add depth data output to the session")
+            setupResult = .configurationFailed
+            return
+        }
+        session.addOutput(depthDataOutput)
+        depthDataOutput.isFilteringEnabled = true
+        depthDataOutput.connection(with: .depthData)?.isEnabled = true
+        depthDataOutput.connection(with: .depthData)?.videoOrientation = .portrait
+        
+        /// 同步数据
+        outputSynchronizer = AVCaptureDataOutputSynchronizer(dataOutputs: [videoDataOutput, depthDataOutput])
+        outputSynchronizer?.setDelegate(self, queue: dataOutputQueue)
         
 //        if AVCaptureDevice.supportDolbyVision() {
 //            for format in videoDevice.formats {
@@ -242,14 +290,6 @@ extension PCameraManager {
 //                }
 //            }
 //        }
-        
-        let connection = session.connections.first
-        if let newConnection = connection {
-            newConnection.videoOrientation = .portrait
-            print("sddss")
-        }
-        
-        commitConfiguration()
     }
     
     /// 开始配置session
@@ -351,5 +391,22 @@ extension PCameraManager: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptur
         var reason: CMAttachmentMode = 0
         CMGetAttachment(sampleBuffer, key: kCMSampleBufferAttachmentKey_DroppedFrameReason, attachmentModeOut: &reason)
         HSLog("🤔🤔\(String(describing: reason))丢帧了")
+    }
+}
+
+// MARK: - Synchronizer代理
+extension PCameraManager: AVCaptureDataOutputSynchronizerDelegate {
+    public func dataOutputSynchronizer(_ synchronizer: AVCaptureDataOutputSynchronizer, didOutput synchronizedDataCollection: AVCaptureSynchronizedDataCollection) {
+        // Read all outputs
+        guard let syncedDepthData = synchronizedDataCollection.synchronizedData(for: depthDataOutput) as? AVCaptureSynchronizedDepthData,
+              let syncedVideoData = synchronizedDataCollection.synchronizedData(for: videoDataOutput) as? AVCaptureSynchronizedSampleBufferData else {
+            return
+        }
+        
+        if syncedDepthData.depthDataWasDropped || syncedVideoData.sampleBufferWasDropped {
+            return
+        }
+        
+        delegate?.videoOutputSynchronizer(didOutput: syncedVideoData.sampleBuffer, depthPixelBuffer: syncedDepthData.depthData.depthDataMap)
     }
 }

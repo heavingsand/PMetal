@@ -73,6 +73,7 @@ class MetalVC: UIViewController {
         dataSource.functionList.append(Function(vcName: "MetalRenderCameraVC", title: "相机滤镜"))
         dataSource.functionList.append(Function(vcName: "MetalLutObjCameraVC", title: "Lut滤镜封装"))
         dataSource.functionList.append(Function(vcName: "MetalMultiCameraVC", title: "多镜头相机"))
+        dataSource.functionList.append(Function(vcName: "MetalDepthCameraVC", title: "深度相机"))
     }
     
     private func bindViews() {
