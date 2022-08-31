@@ -170,7 +170,7 @@ class MetalDepthCameraVC: MetalBasicVC {
             return
         }
         
-        let gaussianBlur = MPSImageGaussianBlur(device: metalContext.device, sigma: 30)
+        let gaussianBlur = MPSImageGaussianBlur(device: metalContext.device, sigma: 10)
         gaussianBlur.encode(commandBuffer: commandBuffer, sourceTexture: texture, destinationTexture: blurTexture)
         
         // 获取过程描述符, MTLRenderPassDescriptor描述一系列attachments的值，类似GL的FrameBuffer, 同时也用来创建MTLRenderCommandEncoder

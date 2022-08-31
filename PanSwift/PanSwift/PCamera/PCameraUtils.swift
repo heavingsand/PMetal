@@ -57,6 +57,9 @@ public struct PCameraUtils {
             kCVPixelBufferIOSurfacePropertiesKey as String: [:]
         ]
         
+//        /// 默认初始化参数
+//        let format = try? CMFormatDescription(videoCodecType: .pixelFormat_32BGRA, width: 1080, height: 720)
+        
         // Get pixel buffer attributes and color space from the input format description
         var cgColorSpace: CGColorSpace? = CGColorSpaceCreateDeviceRGB()
         if let inputFormatDescriptionExtension = CMFormatDescriptionGetExtensions(inputFormatDescription) as Dictionary? {

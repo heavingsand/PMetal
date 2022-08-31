@@ -33,8 +33,9 @@ class MetalBasicThreeVC: UIViewController {
         setupUI()
         setupMetal()
         
-        timer = CADisplayLink(target: self, selector: #selector(gameLoop))
-        timer?.add(to: RunLoop.main, forMode: .default)
+//        timer = CADisplayLink(target: self, selector: #selector(gameLoop))
+//        timer?.add(to: RunLoop.main, forMode: .default)
+        render()
     }
     
     override func viewWillAppear(_ animated: Bool) {

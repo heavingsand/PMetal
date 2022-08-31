@@ -90,6 +90,7 @@ fragment half4 lut_texture_fragment(TextureVertex textureVertex [[ stage_in ]], 
     return half4(newColor.rgb, imageColor.w);
 }
 
+/// 边界保护
 bool checkPointInRectRender(uint2 point,uint2 origin, uint2 rect) {
     return point.x >= origin.x &&
     point.y >= origin.y &&
@@ -190,6 +191,7 @@ kernel void lut_texture_kernel(constant LutFilterParameters *params [[buffer(0)]
     half4 newColor2 = lutTexture.read(uint2(texPos2.x * 512, texPos2.y * 512));
 //    half4 newColor1 = lutTexture.sample(sampler, float2(texPos1.x * 512, texPos2.y * 512 ));
 //    half4 newColor2 = lutTexture.sample(sampler, float2(texPos2.x * 512, texPos2.y * 512 ));
+    // mix(x, y, a): x, y的线性混叠， x(1-a) + y*a;  a为0 结果为x, a为1 结果为y
     half4 newColor = mix(newColor1, newColor2, half(fract(blueColor)));
     half4 finalColor = mix(color, half4(newColor.rgb, color.w), half(params->saturation));
 

@@ -12,11 +12,6 @@ import Photos
 
 class MetalMultiCameraVC: MetalBasicVC {
     
-    struct MixerParameters {
-        var pipPosition: SIMD2<Float>
-        var pipSize: SIMD2<Float>
-    }
-    
     // MARK: - Property
     
     let cameraManager = PCameraMultiManager()
@@ -26,9 +21,6 @@ class MetalMultiCameraVC: MetalBasicVC {
     
     /// 渲染管道状态
     private var pipelineState: MTLRenderPipelineState!
-    
-    /// 并行计算管道状态
-    private var computePipelineState: MTLComputePipelineState!
     
     /// 采样状态
     private var samplerState: MTLSamplerState!
@@ -74,6 +66,12 @@ class MetalMultiCameraVC: MetalBasicVC {
     
     /// 当前画中画buffer
     private var currentPiPSampleBuffer: CVImageBuffer?
+    
+    /// lut滤镜对象
+    private var lutFilter: PMetalLutFilter?
+    
+    /// 画中画滤镜
+    private var pipMixer: PMetalPIPMixer?
 
     // MARK: - Life Cycle
     override func viewDidLoad() {
@@ -89,6 +87,17 @@ class MetalMultiCameraVC: MetalBasicVC {
         cameraManager.prepare()
         
         setupMetal()
+        
+        // 获取图片
+        guard let image = UIImage(named: "lut5") else {
+            print("图片加载失败")
+            return
+        }
+        
+        lutFilter = PMetalLutFilter(device: metalContext.device)
+        lutFilter?.lutImage = image
+        
+        pipMixer = PMetalPIPMixer(with: metalContext.device)
         
         recordButton.addTarget(self, action: #selector(recordClick), for: .touchUpInside)
     }
@@ -190,19 +199,6 @@ class MetalMultiCameraVC: MetalBasicVC {
         }
         
         self.pipelineState = pipelineState
-        
-        // 并行计算函数
-        guard let kernelFunction = library?.makeFunction(name: "pipMixer") else {
-            HSLog("并行函数创建异常!")
-            assertionFailure("并行函数创建异常!")
-            return
-        }
-        
-        guard let computePipelineState = try? metalContext.device.makeComputePipelineState(function: kernelFunction) else {
-            HSLog("并行管道状态异常!")
-            return
-        }
-        self.computePipelineState = computePipelineState
     }
     
     /// 设置采样状态
@@ -235,7 +231,7 @@ class MetalMultiCameraVC: MetalBasicVC {
     }
     
     /// 混合buffer
-    func mix(fullScreenPixelBuffer: CVPixelBuffer, pipPixelBuffer: CVPixelBuffer, fullScreenPixelBufferIsFrontCamera: Bool) -> CVPixelBuffer? {
+    func mix(fullPixelBuffer: CVPixelBuffer, pipPixelBuffer: CVPixelBuffer) -> CVPixelBuffer? {
         guard isPrepared, let outputPixelBufferPool = outputPixelBufferPool else {
             assertionFailure("Invalid state: Not prepared")
             return nil
@@ -249,46 +245,57 @@ class MetalMultiCameraVC: MetalBasicVC {
         }
         
         guard let outputTexture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: outputPixelBuffer),
-              let fullScreenTexture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: fullScreenPixelBuffer),
+              let fullTexture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: fullPixelBuffer),
               let pipTexture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: pipPixelBuffer) else {
             return nil
         }
         
-        let pipPosition = SIMD2(Float(pipFrame.origin.x) * Float(fullScreenTexture.width), Float(pipFrame.origin.y) * Float(fullScreenTexture.height))
-        let pipSize = SIMD2(Float(pipFrame.size.width) * Float(pipTexture.width), Float(pipFrame.size.height) * Float(pipTexture.height))
-        var parameters = MixerParameters(pipPosition: pipPosition, pipSize: pipSize)
-        
         // Set up command queue, buffer, and encoder
-        guard let commandQueue = metalContext.commandQueue,
-            let commandBuffer = commandQueue.makeCommandBuffer(),
-            let commandEncoder = commandBuffer.makeComputeCommandEncoder(),
-            let computePipelineState = computePipelineState else {
-                print("Failed to create Metal command encoder")
-                
-            if let textureCache = metalContext.textureCache {
-                CVMetalTextureCacheFlush(textureCache, 0)
-            }
-                
+        guard let commandBuffer = metalContext.commandQueue.makeCommandBuffer() else {
+            print("Failed to create Metal command encoder")
             return nil
         }
         
-        commandEncoder.label = "pip Video Mixer"
-        commandEncoder.setComputePipelineState(computePipelineState)
-        commandEncoder.setTexture(fullScreenTexture, index: 0)
-        commandEncoder.setTexture(pipTexture, index: 1)
-        commandEncoder.setTexture(outputTexture, index: 2)
-        commandEncoder.setBytes(UnsafeMutableRawPointer(&parameters), length: MemoryLayout<MixerParameters>.size, index: 0)
+        pipMixer?.pipFrame = CGRect(x: 0.7, y: 0.7, width: 0.25, height: 0.25)
+        pipMixer?.encode(commandBuffer: commandBuffer, fullTexture: fullTexture, pipTexture: pipTexture, outputTexture: outputTexture)
+        pipFrame = CGRect(x: 0.7, y: 0.7, width: 0.25, height: 0.25)
         
-        // Set up thread groups as described in https://developer.apple.com/reference/metal/mtlcomputecommandencoder
-        let width = computePipelineState.threadExecutionWidth
-        let height = computePipelineState.maxTotalThreadsPerThreadgroup / width
-        let threadsPerThreadgroup = MTLSizeMake(width, height, 1)
-        let threadgroupsPerGrid = MTLSize(width: (fullScreenTexture.width + width - 1) / width,
-                                          height: (fullScreenTexture.height + height - 1) / height,
-                                          depth: 1)
-        commandEncoder.dispatchThreadgroups(threadgroupsPerGrid, threadsPerThreadgroup: threadsPerThreadgroup)
-        commandEncoder.endEncoding()
+        commandBuffer.commit()
         
+        texture = outputTexture
+        
+        return outputPixelBuffer
+    }
+    
+    /// 滤镜渲染
+    func lutRender(with pixelBuffer: CVPixelBuffer) -> CVPixelBuffer? {
+        guard isPrepared, let outputPixelBufferPool = outputPixelBufferPool else {
+            assertionFailure("Invalid state: Not prepared")
+            return nil
+        }
+        
+        var newPixelBuffer: CVPixelBuffer?
+        CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, outputPixelBufferPool, &newPixelBuffer)
+        guard let outputPixelBuffer = newPixelBuffer else {
+            print("Allocation failure: Could not get pixel buffer from pool (\(self.description))")
+            return nil
+        }
+        
+        guard let inputTexture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: pixelBuffer),
+              let outputTexture = metalContext.makeTextureFromCVPixelBuffer(pixelBuffer: outputPixelBuffer)else {
+            return nil
+        }
+        
+        // 获取命令缓冲区
+        guard let commandBuffer = metalContext.commandQueue.makeCommandBuffer() else {
+            HSLog("CommandBuffer make fail")
+            return nil
+        }
+        
+        lutFilter?.rect = CGRect(x: 0, y: 0, width: inputTexture.width, height: inputTexture.height)
+        lutFilter?.encode(commandBuffer: commandBuffer, sourceTexture: inputTexture, destinationTexture: outputTexture)
+        
+        // 提交
         commandBuffer.commit()
         
         texture = outputTexture
@@ -371,15 +378,16 @@ extension MetalMultiCameraVC: MultiCameraManagerDelegate {
                 preparePipMixer(with: formatDescription, outputRetainedBufferCountHint: 3)
             }
             
-            pipFrame = CGRect(x: 0.7, y: 0.7, width: 0.25, height: 0.25)
+            guard let lutPixelBuffer = lutRender(with: pixelBuffer) else {
+                print("Unable to combine video")
+                return
+            }
             
             // Mix the full screen pixel buffer with the pip pixel buffer
             // When the PIP is the back camera, the primaryPixelBuffer is the front camera
-            guard let mixedPixelBuffer = mix(fullScreenPixelBuffer: pixelBuffer,
-                                             pipPixelBuffer: pipPixelBuffer,
-                                             fullScreenPixelBufferIsFrontCamera: !isPip) else {
-                                                            print("Unable to combine video")
-                                                            return
+            guard let mixedPixelBuffer = mix(fullPixelBuffer: lutPixelBuffer, pipPixelBuffer: pipPixelBuffer) else {
+                print("Unable to combine video")
+                return
             }
             
             if let recorder = cameraRecorder, recorder.isRecording, let videoTrackSourceFormatDescription = videoTrackSourceFormatDescription {

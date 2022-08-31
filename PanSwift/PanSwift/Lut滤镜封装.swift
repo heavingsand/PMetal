@@ -218,11 +218,25 @@ class MetalLutObjCameraVC: MetalBasicVC {
     /// 设置顶点
     func setupVertex() {
         /// 顶点坐标x、y、z、w
+//        let vertexData:[Float] = [
+//            -1.0, -1.0, 0.0,
+//             -1.0, 1.0, 0.0,
+//             1.0, -1.0, 0.0,
+//             1.0, 1.0, 0.0,
+//        ]
+        
+//        let vertexData:[TextureVertex] = [
+//            TextureVertex(position: simd_make_float4(-1.0, -1.0, 0.0, 1.0), texCoords: simd_make_float2(0.0, 1.0)),
+//            TextureVertex(position: simd_make_float4(-1.0, 1.0, 0.0, 1.0), texCoords: simd_make_float2(0.0, 0.0)),
+//            TextureVertex(position: simd_make_float4(1.0, -1.0, 0.0, 1.0), texCoords: simd_make_float2(1.0, 1.0)),
+//            TextureVertex(position: simd_make_float4(1.0, 1.0, 0.0, 1.0), texCoords: simd_make_float2(1.0, 0.0)),
+//        ]
+        
         let vertextData:[Float] = [
-            -1.0, -1.0, 0.0,
-             -1.0, 1.0, 0.0,
-             1.0, -1.0, 0.0,
-             1.0, 1.0, 0.0,
+            -1.0, -1.0, 0.0, 1.0, 0.0, 1.0,
+             -1.0, 1.0, 0.0, 1.0, 0.0, 0.0,
+             1.0, -1.0, 0.0, 1.0, 1.0, 1.0,
+             1.0, 1.0, 0.0, 1.0, 1.0, 0.0,
         ]
         
         // 创建顶点缓冲区
@@ -233,7 +247,7 @@ class MetalLutObjCameraVC: MetalBasicVC {
     func setupPipeline() {
         let library = metalContext.library
         // 顶点shader，texture_vertex_main是函数名
-        let vertexFuction = library?.makeFunction(name: "texture_vertex_main")
+        let vertexFuction = library?.makeFunction(name: "texture_vertex_main_one")
         // 片元shader，texture_fragment_main是函数名
         let fragmentFunction = library?.makeFunction(name: "texture_fragment_main")
         

@@ -1,0 +1,16 @@
+PODS:
+  - PMetal (0.0.1)
+
+DEPENDENCIES:
+  - PMetal (from `..`)
+
+EXTERNAL SOURCES:
+  PMetal:
+    :path: ".."
+
+SPEC CHECKSUMS:
+  PMetal: 2915938587018c46af1840a7435990676e2306fd
+
+PODFILE CHECKSUM: bd7e3eff5d49b3e51f795fdda5d5342b34612c5b
+
+COCOAPODS: 1.11.3

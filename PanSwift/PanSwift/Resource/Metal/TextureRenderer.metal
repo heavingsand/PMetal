@@ -8,6 +8,14 @@ struct TextureVertex
     float2 texCoords;
 };
 
+/// 纹理顶点输入
+struct TextureVertexIn
+{
+    // 传递进来的顶点数据要定义成packed-->紧致矢量类型
+    packed_float4 position;
+    packed_float2 texCoords;
+};
+
 struct InputFloat3
 {
     float x;
@@ -15,7 +23,8 @@ struct InputFloat3
     float z;
 };
 
-/// 顶点函数
+// MARK: 顶点函数
+
 vertex TextureVertex texture_vertex_main(constant InputFloat3 *inVertex [[buffer(0)]],
                                          uint vid [[vertex_id]])
 {
@@ -25,6 +34,18 @@ vertex TextureVertex texture_vertex_main(constant InputFloat3 *inVertex [[buffer
     vert.texCoords = float2(0.5 + inVertex[vid].x / 2.0, 0.5 - inVertex[vid].y / 2.0);
     return vert;
 }
+
+vertex TextureVertex texture_vertex_main_one(constant TextureVertexIn *inVertex [[buffer(0)]],
+                                             uint vid [[vertex_id]])
+{
+    TextureVertex vert;
+    vert.position = inVertex[vid].position;
+    /** 这里要进行iOS坐标系和平面坐标系的转换*/
+    vert.texCoords = inVertex[vid].texCoords;
+    return vert;
+}
+
+// MARK: 片元函数
 
 /// 片元函数
 fragment half4 texture_fragment_main(TextureVertex vert [[stage_in]],
