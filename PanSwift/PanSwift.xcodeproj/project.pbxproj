@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8685935BC0C11E9D647DAADC /* Pods_PanSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34BF3E4145122FB01EE39C92 /* Pods_PanSwift.framework */; };
+		9D09071628C201FE0097F276 /* HSIColor.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D09071528C201FE0097F276 /* HSIColor.metal */; };
 		9D105E7F2616FAA8006667CB /* CombineCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 9D105E7E2616FAA8006667CB /* CombineCocoa */; };
 		9D114BEF2880087100B590BE /* PMetalBlurFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D114BEE2880087100B590BE /* PMetalBlurFilter.swift */; };
 		9D1B0ED92856DCDD0042D772 /* MixerShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D1B0ED82856DCDD0042D772 /* MixerShader.metal */; };
@@ -52,6 +53,7 @@
 		9D8F09A828892F63002E19AB /* GrayShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D8F09A728892F63002E19AB /* GrayShader.metal */; };
 		9D9D776126F07E9D00F4F4BC /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D9D776026F07E9D00F4F4BC /* Shaders.metal */; };
 		9DC2E29E26EF38CA00EB47C4 /* HSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC2E29D26EF38CA00EB47C4 /* HSLog.swift */; };
+		9DC5EC6428CAEBED00685DB9 /* specline.png in Resources */ = {isa = PBXBuildFile; fileRef = 9DC5EC6328CAEBED00685DB9 /* specline.png */; };
 		9DC85F882852F96E00B9FBE3 /* PCameraMultiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC85F872852F96E00B9FBE3 /* PCameraMultiManager.swift */; };
 		9DC9D530279AB2DE007E7578 /* 相机预览.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC9D52F279AB2DE007E7578 /* 相机预览.swift */; };
 		9DC9D533279AB823007E7578 /* PCameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC9D532279AB823007E7578 /* PCameraManager.swift */; };
@@ -60,11 +62,17 @@
 		9DE3997627857BF90020A937 /* Lut图片滤镜.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE3997527857BF90020A937 /* Lut图片滤镜.swift */; };
 		9DE3997A2785A9120020A937 /* LutFilter.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9DE399792785A9120020A937 /* LutFilter.metal */; };
 		9DE93E21277B0635009D8227 /* MetalGuide.md in Resources */ = {isa = PBXBuildFile; fileRef = 9DE93E20277B0635009D8227 /* MetalGuide.md */; };
+		9DEEB4F328BF585200CBE23C /* 色坐标.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DEEB4F228BF585200CBE23C /* 色坐标.swift */; };
+		9DF5A85128D8524600D42885 /* HSI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF5A85028D8524600D42885 /* HSI.swift */; };
+		9DF5A85328D8525500D42885 /* HSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF5A85228D8525500D42885 /* HSV.swift */; };
+		9DF5A85528D856A500D42885 /* HSVColor.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9DF5A85428D856A500D42885 /* HSVColor.metal */; };
+		9DF5A85728D85E7400D42885 /* CIEColor.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9DF5A85628D85E7400D42885 /* CIEColor.metal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0240BE5BC34DCF676F01A978 /* Pods-PanSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PanSwift.release.xcconfig"; path = "Target Support Files/Pods-PanSwift/Pods-PanSwift.release.xcconfig"; sourceTree = "<group>"; };
 		34BF3E4145122FB01EE39C92 /* Pods_PanSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PanSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D09071528C201FE0097F276 /* HSIColor.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = HSIColor.metal; sourceTree = "<group>"; };
 		9D114BEE2880087100B590BE /* PMetalBlurFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PMetalBlurFilter.swift; sourceTree = "<group>"; };
 		9D1B0ED82856DCDD0042D772 /* MixerShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = MixerShader.metal; sourceTree = "<group>"; };
 		9D1B0EDA2856EFF00042D772 /* PMetalPIPMixer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PMetalPIPMixer.swift; sourceTree = "<group>"; };
@@ -108,6 +116,7 @@
 		9D8F09A728892F63002E19AB /* GrayShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = GrayShader.metal; sourceTree = "<group>"; };
 		9D9D776026F07E9D00F4F4BC /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		9DC2E29D26EF38CA00EB47C4 /* HSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HSLog.swift; sourceTree = "<group>"; };
+		9DC5EC6328CAEBED00685DB9 /* specline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = specline.png; sourceTree = "<group>"; };
 		9DC85F872852F96E00B9FBE3 /* PCameraMultiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PCameraMultiManager.swift; sourceTree = "<group>"; };
 		9DC9D52F279AB2DE007E7578 /* 相机预览.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "相机预览.swift"; sourceTree = "<group>"; };
 		9DC9D532279AB823007E7578 /* PCameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PCameraManager.swift; sourceTree = "<group>"; };
@@ -116,6 +125,11 @@
 		9DE3997527857BF90020A937 /* Lut图片滤镜.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Lut图片滤镜.swift"; sourceTree = "<group>"; };
 		9DE399792785A9120020A937 /* LutFilter.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = LutFilter.metal; sourceTree = "<group>"; };
 		9DE93E20277B0635009D8227 /* MetalGuide.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = MetalGuide.md; sourceTree = "<group>"; };
+		9DEEB4F228BF585200CBE23C /* 色坐标.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "色坐标.swift"; sourceTree = "<group>"; };
+		9DF5A85028D8524600D42885 /* HSI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HSI.swift; sourceTree = "<group>"; };
+		9DF5A85228D8525500D42885 /* HSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HSV.swift; sourceTree = "<group>"; };
+		9DF5A85428D856A500D42885 /* HSVColor.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = HSVColor.metal; sourceTree = "<group>"; };
+		9DF5A85628D85E7400D42885 /* CIEColor.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = CIEColor.metal; sourceTree = "<group>"; };
 		BC22A69AF448C4CCEE1CE2B0 /* Pods-PanSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PanSwift.debug.xcconfig"; path = "Target Support Files/Pods-PanSwift/Pods-PanSwift.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -174,6 +188,9 @@
 				9D6BE4AD2851FE7E00AADD52 /* 多镜头相机.swift */,
 				9D2FAD9B287EA3EF00E814A7 /* 深度相机.swift */,
 				9D2D04DF288144BA007D8CDF /* 滤镜链.swift */,
+				9DEEB4F228BF585200CBE23C /* 色坐标.swift */,
+				9DF5A85028D8524600D42885 /* HSI.swift */,
+				9DF5A85228D8525500D42885 /* HSV.swift */,
 				9D69860D271823410022FB41 /* Supporting Files */,
 			);
 			path = PanSwift;
@@ -228,6 +245,7 @@
 				9D5AD904277C16E8004ECD57 /* face.png */,
 				9D6E054927C4CA370021B5A1 /* IMG_0311.JPG */,
 				9DE93E20277B0635009D8227 /* MetalGuide.md */,
+				9DC5EC6328CAEBED00685DB9 /* specline.png */,
 				9DE93E23277B0ABE009D8227 /* 3D */,
 				9DE93E22277B0A9E009D8227 /* Metal */,
 			);
@@ -259,6 +277,9 @@
 				9D2FAD9D287ED03E00E814A7 /* DepthShader.metal */,
 				9D8F09A728892F63002E19AB /* GrayShader.metal */,
 				9D83D600289B80D400E2997C /* RotationFilter.metal */,
+				9DF5A85628D85E7400D42885 /* CIEColor.metal */,
+				9D09071528C201FE0097F276 /* HSIColor.metal */,
+				9DF5A85428D856A500D42885 /* HSVColor.metal */,
 			);
 			path = Metal;
 			sourceTree = "<group>";
@@ -372,6 +393,7 @@
 				9D65DE962615B41D0054724A /* Main.storyboard in Resources */,
 				9DE93E21277B0635009D8227 /* MetalGuide.md in Resources */,
 				9D8C269426F5EA070090153D /* untitled.mtl in Resources */,
+				9DC5EC6428CAEBED00685DB9 /* specline.png in Resources */,
 				9D6E054A27C4CA380021B5A1 /* IMG_0311.JPG in Resources */,
 				9D8C268526F591E10090153D /* primitive.obj in Resources */,
 			);
@@ -426,10 +448,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DF5A85528D856A500D42885 /* HSVColor.metal in Sources */,
 				9D8C268926F598E40090153D /* 加载系统模型.swift in Sources */,
 				9D114BEF2880087100B590BE /* PMetalBlurFilter.swift in Sources */,
 				9D9D776126F07E9D00F4F4BC /* Shaders.metal in Sources */,
+				9DEEB4F328BF585200CBE23C /* 色坐标.swift in Sources */,
 				9D6F3350271440AD003E00D9 /* PMetalContext.swift in Sources */,
+				9DF5A85128D8524600D42885 /* HSI.swift in Sources */,
 				9D26AC2427F83C4100C84F77 /* PCameraExtension.swift in Sources */,
 				9DC9D530279AB2DE007E7578 /* 相机预览.swift in Sources */,
 				9D6E054E27C4E5890021B5A1 /* PMetalLutFilter.swift in Sources */,
@@ -442,13 +467,16 @@
 				9D8F09A628892E5E002E19AB /* PMetalGrayFilter.swift in Sources */,
 				9D67460F26F1EFA800D7F71B /* MetalVC.swift in Sources */,
 				9D8F09A828892F63002E19AB /* GrayShader.metal in Sources */,
+				9DF5A85728D85E7400D42885 /* CIEColor.metal in Sources */,
 				9D5AD907277C171D004ECD57 /* 加载图片.swift in Sources */,
+				9D09071628C201FE0097F276 /* HSIColor.metal in Sources */,
 				9D65DE912615B41D0054724A /* SceneDelegate.swift in Sources */,
 				9D6A5C332735428500EBBD7F /* LightShader.metal in Sources */,
 				9DE3997A2785A9120020A937 /* LutFilter.metal in Sources */,
 				9D2D04E0288144BA007D8CDF /* 滤镜链.swift in Sources */,
 				9D6F33542714415C003E00D9 /* 绘制矩形.swift in Sources */,
 				9D6F3352271440FD003E00D9 /* PMetalLayer.swift in Sources */,
+				9DF5A85328D8525500D42885 /* HSV.swift in Sources */,
 				9D1B0EDB2856EFF00042D772 /* PMetalPIPMixer.swift in Sources */,
 				9D26AC2227F82F7B00C84F77 /* Lut滤镜封装.swift in Sources */,
 				9D8C268D26F59C830090153D /* 加载本地模型.swift in Sources */,
