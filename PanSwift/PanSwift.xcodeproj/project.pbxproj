@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -32,6 +32,7 @@
 		9D65DEAF2615D3470054724A /* CombineDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 9D65DEAE2615D3470054724A /* CombineDataSources */; };
 		9D67460F26F1EFA800D7F71B /* MetalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D67460E26F1EFA800D7F71B /* MetalVC.swift */; };
 		9D69C4D827198DDD00EE9C49 /* Learning.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D69C4D727198DDD00EE9C49 /* Learning.metal */; };
+		9D6A328D28F1743100FA67E1 /* LightAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6A328C28F1743100FA67E1 /* LightAlertVC.swift */; };
 		9D6A5C312735333D00EBBD7F /* 灯光.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6A5C302735333D00EBBD7F /* 灯光.swift */; };
 		9D6A5C332735428500EBBD7F /* LightShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D6A5C322735428500EBBD7F /* LightShader.metal */; };
 		9D6BE4AE2851FE7E00AADD52 /* 多镜头相机.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BE4AD2851FE7E00AADD52 /* 多镜头相机.swift */; };
@@ -42,6 +43,8 @@
 		9D6F33542714415C003E00D9 /* 绘制矩形.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6F33532714415C003E00D9 /* 绘制矩形.swift */; };
 		9D7061E726244BFA0016653A /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 9D7061E626244BFA0016653A /* Kingfisher */; };
 		9D83D601289B80D400E2997C /* RotationFilter.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D83D600289B80D400E2997C /* RotationFilter.metal */; };
+		9D855D4F28F279C00098EAD3 /* ZYAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D855D4E28F279C00098EAD3 /* ZYAlertController.swift */; };
+		9D855D5128F2C7D30098EAD3 /* ZYActionSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D855D5028F2C7D30098EAD3 /* ZYActionSheetView.swift */; };
 		9D8C268526F591E10090153D /* primitive.obj in Resources */ = {isa = PBXBuildFile; fileRef = 9D8C268326F591E10090153D /* primitive.obj */; };
 		9D8C268626F591E10090153D /* primitive.mtl in Resources */ = {isa = PBXBuildFile; fileRef = 9D8C268426F591E10090153D /* primitive.mtl */; };
 		9D8C268926F598E40090153D /* 加载系统模型.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8C268826F598E40090153D /* 加载系统模型.swift */; };
@@ -51,6 +54,7 @@
 		9D8C269526F5EA070090153D /* untitled.obj in Resources */ = {isa = PBXBuildFile; fileRef = 9D8C269326F5EA070090153D /* untitled.obj */; };
 		9D8F09A628892E5E002E19AB /* PMetalGrayFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8F09A528892E5E002E19AB /* PMetalGrayFilter.swift */; };
 		9D8F09A828892F63002E19AB /* GrayShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D8F09A728892F63002E19AB /* GrayShader.metal */; };
+		9D9C92F42B91BB8400C6D63A /* cie.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D9C92F32B91BB8400C6D63A /* cie.png */; };
 		9D9D776126F07E9D00F4F4BC /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D9D776026F07E9D00F4F4BC /* Shaders.metal */; };
 		9DC2E29E26EF38CA00EB47C4 /* HSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC2E29D26EF38CA00EB47C4 /* HSLog.swift */; };
 		9DC5EC6428CAEBED00685DB9 /* specline.png in Resources */ = {isa = PBXBuildFile; fileRef = 9DC5EC6328CAEBED00685DB9 /* specline.png */; };
@@ -96,6 +100,7 @@
 		9D67460E26F1EFA800D7F71B /* MetalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalVC.swift; sourceTree = "<group>"; };
 		9D69860B27181E9A0022FB41 /* PanSwift-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanSwift-Bridging-Header.h"; sourceTree = "<group>"; };
 		9D69C4D727198DDD00EE9C49 /* Learning.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Learning.metal; sourceTree = "<group>"; };
+		9D6A328C28F1743100FA67E1 /* LightAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightAlertVC.swift; sourceTree = "<group>"; };
 		9D6A5C302735333D00EBBD7F /* 灯光.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "灯光.swift"; sourceTree = "<group>"; };
 		9D6A5C322735428500EBBD7F /* LightShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = LightShader.metal; sourceTree = "<group>"; };
 		9D6BE4AD2851FE7E00AADD52 /* 多镜头相机.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "多镜头相机.swift"; sourceTree = "<group>"; };
@@ -105,6 +110,8 @@
 		9D6F3351271440FD003E00D9 /* PMetalLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PMetalLayer.swift; sourceTree = "<group>"; };
 		9D6F33532714415C003E00D9 /* 绘制矩形.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "绘制矩形.swift"; sourceTree = "<group>"; };
 		9D83D600289B80D400E2997C /* RotationFilter.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = RotationFilter.metal; sourceTree = "<group>"; };
+		9D855D4E28F279C00098EAD3 /* ZYAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZYAlertController.swift; sourceTree = "<group>"; };
+		9D855D5028F2C7D30098EAD3 /* ZYActionSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZYActionSheetView.swift; sourceTree = "<group>"; };
 		9D8C268326F591E10090153D /* primitive.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = primitive.obj; sourceTree = "<group>"; };
 		9D8C268426F591E10090153D /* primitive.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = primitive.mtl; sourceTree = "<group>"; };
 		9D8C268826F598E40090153D /* 加载系统模型.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "加载系统模型.swift"; sourceTree = "<group>"; };
@@ -114,6 +121,7 @@
 		9D8C269326F5EA070090153D /* untitled.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = untitled.obj; sourceTree = "<group>"; };
 		9D8F09A528892E5E002E19AB /* PMetalGrayFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PMetalGrayFilter.swift; sourceTree = "<group>"; };
 		9D8F09A728892F63002E19AB /* GrayShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = GrayShader.metal; sourceTree = "<group>"; };
+		9D9C92F32B91BB8400C6D63A /* cie.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cie.png; sourceTree = "<group>"; };
 		9D9D776026F07E9D00F4F4BC /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		9DC2E29D26EF38CA00EB47C4 /* HSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HSLog.swift; sourceTree = "<group>"; };
 		9DC5EC6328CAEBED00685DB9 /* specline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = specline.png; sourceTree = "<group>"; };
@@ -175,6 +183,7 @@
 				9D69860E271823610022FB41 /* Base */,
 				9D6F334C27143E52003E00D9 /* PMetal */,
 				9DC9D531279AB7F9007E7578 /* PCamera */,
+				9D855D4D28F2797A0098EAD3 /* PCommon */,
 				9D67460E26F1EFA800D7F71B /* MetalVC.swift */,
 				9D8C268826F598E40090153D /* 加载系统模型.swift */,
 				9D8C268C26F59C830090153D /* 加载本地模型.swift */,
@@ -191,6 +200,7 @@
 				9DEEB4F228BF585200CBE23C /* 色坐标.swift */,
 				9DF5A85028D8524600D42885 /* HSI.swift */,
 				9DF5A85228D8525500D42885 /* HSV.swift */,
+				9D6A328C28F1743100FA67E1 /* LightAlertVC.swift */,
 				9D69860D271823410022FB41 /* Supporting Files */,
 			);
 			path = PanSwift;
@@ -239,6 +249,15 @@
 			path = PMetal;
 			sourceTree = "<group>";
 		};
+		9D855D4D28F2797A0098EAD3 /* PCommon */ = {
+			isa = PBXGroup;
+			children = (
+				9D855D4E28F279C00098EAD3 /* ZYAlertController.swift */,
+				9D855D5028F2C7D30098EAD3 /* ZYActionSheetView.swift */,
+			);
+			path = PCommon;
+			sourceTree = "<group>";
+		};
 		9D8C268726F592540090153D /* Resource */ = {
 			isa = PBXGroup;
 			children = (
@@ -246,6 +265,7 @@
 				9D6E054927C4CA370021B5A1 /* IMG_0311.JPG */,
 				9DE93E20277B0635009D8227 /* MetalGuide.md */,
 				9DC5EC6328CAEBED00685DB9 /* specline.png */,
+				9D9C92F32B91BB8400C6D63A /* cie.png */,
 				9DE93E23277B0ABE009D8227 /* 3D */,
 				9DE93E22277B0A9E009D8227 /* Metal */,
 			);
@@ -320,10 +340,12 @@
 			buildConfigurationList = 9D65DE9F2615B41F0054724A /* Build configuration list for PBXNativeTarget "PanSwift" */;
 			buildPhases = (
 				6C09B887082762D9203D346C /* [CP] Check Pods Manifest.lock */,
+				4FE216C83A2341F8981F1E7B /* [CP-User] Run Flutter Build my_flutter Script */,
 				9D65DE872615B41D0054724A /* Sources */,
 				9D65DE882615B41D0054724A /* Frameworks */,
 				9D65DE892615B41D0054724A /* Resources */,
 				3173170F1B2CC3ED0BD8178E /* [CP] Embed Pods Frameworks */,
+				4292C27DD8EA1967AAE9A6C2 /* [CP-User] Embed Flutter Build my_flutter Script */,
 			);
 			buildRules = (
 			);
@@ -386,6 +408,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9D65DE9B2615B41F0054724A /* LaunchScreen.storyboard in Resources */,
+				9D9C92F42B91BB8400C6D63A /* cie.png in Resources */,
 				9D65DE982615B41F0054724A /* Assets.xcassets in Resources */,
 				9D5AD905277C16E8004ECD57 /* face.png in Resources */,
 				9D8C269526F5EA070090153D /* untitled.obj in Resources */,
@@ -419,6 +442,26 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PanSwift/Pods-PanSwift-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		4292C27DD8EA1967AAE9A6C2 /* [CP-User] Embed Flutter Build my_flutter Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "[CP-User] Embed Flutter Build my_flutter Script";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nset -u\nsource \"${SRCROOT}/../../Flutter/flutter_ios/my_flutter/.ios/Flutter/flutter_export_environment.sh\"\nexport VERBOSE_SCRIPT_LOGGING=1 && \"$FLUTTER_ROOT\"/packages/flutter_tools/bin/xcode_backend.sh embed_and_thin";
+		};
+		4FE216C83A2341F8981F1E7B /* [CP-User] Run Flutter Build my_flutter Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "[CP-User] Run Flutter Build my_flutter Script";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nset -u\nsource \"${SRCROOT}/../../Flutter/flutter_ios/my_flutter/.ios/Flutter/flutter_export_environment.sh\"\nexport VERBOSE_SCRIPT_LOGGING=1 && \"$FLUTTER_ROOT\"/packages/flutter_tools/bin/xcode_backend.sh build";
+		};
 		6C09B887082762D9203D346C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -448,12 +491,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D6A328D28F1743100FA67E1 /* LightAlertVC.swift in Sources */,
 				9DF5A85528D856A500D42885 /* HSVColor.metal in Sources */,
 				9D8C268926F598E40090153D /* 加载系统模型.swift in Sources */,
 				9D114BEF2880087100B590BE /* PMetalBlurFilter.swift in Sources */,
 				9D9D776126F07E9D00F4F4BC /* Shaders.metal in Sources */,
 				9DEEB4F328BF585200CBE23C /* 色坐标.swift in Sources */,
 				9D6F3350271440AD003E00D9 /* PMetalContext.swift in Sources */,
+				9D855D5128F2C7D30098EAD3 /* ZYActionSheetView.swift in Sources */,
 				9DF5A85128D8524600D42885 /* HSI.swift in Sources */,
 				9D26AC2427F83C4100C84F77 /* PCameraExtension.swift in Sources */,
 				9DC9D530279AB2DE007E7578 /* 相机预览.swift in Sources */,
@@ -480,6 +525,7 @@
 				9D1B0EDB2856EFF00042D772 /* PMetalPIPMixer.swift in Sources */,
 				9D26AC2227F82F7B00C84F77 /* Lut滤镜封装.swift in Sources */,
 				9D8C268D26F59C830090153D /* 加载本地模型.swift in Sources */,
+				9D855D4F28F279C00098EAD3 /* ZYAlertController.swift in Sources */,
 				9D5EF1E526F2F7FF00D94537 /* TextureRenderer.metal in Sources */,
 				9D6BE4AE2851FE7E00AADD52 /* 多镜头相机.swift in Sources */,
 				9DCF055028646D9500AA207A /* PCameraUtils.swift in Sources */,
