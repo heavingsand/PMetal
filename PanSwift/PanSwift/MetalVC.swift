@@ -10,7 +10,6 @@ import Combine
 import CombineDataSources
 import CombineCocoa
 import SnapKit
-import Flutter
 
 class JSONCoder {
     @Published public var functionList: Array<Function> = Array()
@@ -30,19 +29,6 @@ struct Function: Codable, Equatable, Hashable {
 class MetalVC: UIViewController {
     
     // MARK: - Property
-    lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        self.view.addSubview(tableView)
-        tableView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
-        }
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "UITableViewCell")
-        tableView.separatorStyle = .none
-        if #available(iOS 11.0, *) {
-            tableView.contentInsetAdjustmentBehavior = .never
-        }
-        return tableView
-    }()
     
     let dataSource: JSONCoder = JSONCoder()
     var cancellables = Set<AnyCancellable>()
@@ -64,7 +50,6 @@ class MetalVC: UIViewController {
         
         bindViews()
         
-        dataSource.functionList.append(Function(vcName: "MetalHSVVC", title: "Flutter"))
         dataSource.functionList.append(Function(vcName: "MetalBasicOneVC", title: "加载系统模型"))
         dataSource.functionList.append(Function(vcName: "MetalBasicTwoVC", title: "加载本地模型"))
         dataSource.functionList.append(Function(vcName: "MetalBasicThreeVC", title: "绘制矩形"))
@@ -80,6 +65,10 @@ class MetalVC: UIViewController {
         dataSource.functionList.append(Function(vcName: "MetalColorCoordinateVC", title: "色坐标"))
         dataSource.functionList.append(Function(vcName: "MetalHSIVC", title: "HSI"))
         dataSource.functionList.append(Function(vcName: "MetalHSVVC", title: "HSV"))
+        dataSource.functionList.append(Function(vcName: "JoystickViewController", title: "操作手柄"))
+        dataSource.functionList.append(Function(vcName: "MetalImageWatermarkVC", title: "图片水印"))
+        dataSource.functionList.append(Function(vcName: "UDPSendViewController", title: "UDPSender"))
+        dataSource.functionList.append(Function(vcName: "UDPReceiverViewController", title: "UDPReceiver"))
     }
     
     private func bindViews() {
@@ -94,12 +83,7 @@ class MetalVC: UIViewController {
             .didSelectRowPublisher
             .sink { [weak self] (indexPath) in
                 guard let strongSelf = self else { return }
-                if indexPath.row == 0 {
-                    strongSelf.jumpToFlutter()
-                } else {
-                    strongSelf.jumpToVC(classModel: strongSelf.dataSource.functionList[indexPath.row])
-                }
-                
+                strongSelf.jumpToVC(classModel: strongSelf.dataSource.functionList[indexPath.row])
             }
             .store(in: &cancellables)
     }
@@ -123,11 +107,20 @@ class MetalVC: UIViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     
-    /// 跳转到Flutter页面
-    func jumpToFlutter() {
-        let flutterEngine = (UIApplication.shared.delegate as! AppDelegate).flutterEngine
-        let flutterViewController = FlutterViewController(engine: flutterEngine, nibName: nil, bundle: nil)
-        navigationController?.pushViewController(flutterViewController, animated: true)
-    }
+    // MARK: - Lazyload
+    
+    lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        self.view.addSubview(tableView)
+        tableView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "UITableViewCell")
+        tableView.separatorStyle = .none
+        if #available(iOS 11.0, *) {
+            tableView.contentInsetAdjustmentBehavior = .never
+        }
+        return tableView
+    }()
     
 }

@@ -20,6 +20,11 @@
 		9D2D04E0288144BA007D8CDF /* 滤镜链.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D2D04DF288144BA007D8CDF /* 滤镜链.swift */; };
 		9D2FAD9C287EA3EF00E814A7 /* 深度相机.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D2FAD9B287EA3EF00E814A7 /* 深度相机.swift */; };
 		9D2FAD9E287ED03E00E814A7 /* DepthShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D2FAD9D287ED03E00E814A7 /* DepthShader.metal */; };
+		9D57F67A2D71B91E00DB9DC0 /* UDPSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D57F6792D71B91E00DB9DC0 /* UDPSender.swift */; };
+		9D57F67C2D71B9FB00DB9DC0 /* UDPReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D57F67B2D71B9FB00DB9DC0 /* UDPReceiver.swift */; };
+		9D57F6842D76F77900DB9DC0 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D57F6832D76F77900DB9DC0 /* NetworkManager.swift */; };
+		9D57F6862D7AE74600DB9DC0 /* JoystickView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D57F6852D7AE74600DB9DC0 /* JoystickView.swift */; };
+		9D57F6882D82C7B400DB9DC0 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D57F6872D82C7B400DB9DC0 /* BluetoothManager.swift */; };
 		9D5AD905277C16E8004ECD57 /* face.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D5AD904277C16E8004ECD57 /* face.png */; };
 		9D5AD907277C171D004ECD57 /* 加载图片.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5AD906277C171D004ECD57 /* 加载图片.swift */; };
 		9D5EF1E526F2F7FF00D94537 /* TextureRenderer.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D5EF1E426F2F7FF00D94537 /* TextureRenderer.metal */; };
@@ -32,7 +37,7 @@
 		9D65DEAF2615D3470054724A /* CombineDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 9D65DEAE2615D3470054724A /* CombineDataSources */; };
 		9D67460F26F1EFA800D7F71B /* MetalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D67460E26F1EFA800D7F71B /* MetalVC.swift */; };
 		9D69C4D827198DDD00EE9C49 /* Learning.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D69C4D727198DDD00EE9C49 /* Learning.metal */; };
-		9D6A328D28F1743100FA67E1 /* LightAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6A328C28F1743100FA67E1 /* LightAlertVC.swift */; };
+		9D6A328D28F1743100FA67E1 /* 操作手柄.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6A328C28F1743100FA67E1 /* 操作手柄.swift */; };
 		9D6A5C312735333D00EBBD7F /* 灯光.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6A5C302735333D00EBBD7F /* 灯光.swift */; };
 		9D6A5C332735428500EBBD7F /* LightShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D6A5C322735428500EBBD7F /* LightShader.metal */; };
 		9D6BE4AE2851FE7E00AADD52 /* 多镜头相机.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BE4AD2851FE7E00AADD52 /* 多镜头相机.swift */; };
@@ -54,6 +59,7 @@
 		9D8C269526F5EA070090153D /* untitled.obj in Resources */ = {isa = PBXBuildFile; fileRef = 9D8C269326F5EA070090153D /* untitled.obj */; };
 		9D8F09A628892E5E002E19AB /* PMetalGrayFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8F09A528892E5E002E19AB /* PMetalGrayFilter.swift */; };
 		9D8F09A828892F63002E19AB /* GrayShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D8F09A728892F63002E19AB /* GrayShader.metal */; };
+		9D95C8AB2C758D3F00BC4665 /* 图片水印.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D95C8AA2C758D3F00BC4665 /* 图片水印.swift */; };
 		9D9C92F42B91BB8400C6D63A /* cie.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D9C92F32B91BB8400C6D63A /* cie.png */; };
 		9D9D776126F07E9D00F4F4BC /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9D9D776026F07E9D00F4F4BC /* Shaders.metal */; };
 		9DC2E29E26EF38CA00EB47C4 /* HSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC2E29D26EF38CA00EB47C4 /* HSLog.swift */; };
@@ -67,6 +73,7 @@
 		9DE3997A2785A9120020A937 /* LutFilter.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9DE399792785A9120020A937 /* LutFilter.metal */; };
 		9DE93E21277B0635009D8227 /* MetalGuide.md in Resources */ = {isa = PBXBuildFile; fileRef = 9DE93E20277B0635009D8227 /* MetalGuide.md */; };
 		9DEEB4F328BF585200CBE23C /* 色坐标.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DEEB4F228BF585200CBE23C /* 色坐标.swift */; };
+		9DF527C42C7715B2002B7472 /* WatermarkShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9DF527C32C7715B2002B7472 /* WatermarkShader.metal */; };
 		9DF5A85128D8524600D42885 /* HSI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF5A85028D8524600D42885 /* HSI.swift */; };
 		9DF5A85328D8525500D42885 /* HSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF5A85228D8525500D42885 /* HSV.swift */; };
 		9DF5A85528D856A500D42885 /* HSVColor.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9DF5A85428D856A500D42885 /* HSVColor.metal */; };
@@ -87,6 +94,11 @@
 		9D2D04DF288144BA007D8CDF /* 滤镜链.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "滤镜链.swift"; sourceTree = "<group>"; };
 		9D2FAD9B287EA3EF00E814A7 /* 深度相机.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "深度相机.swift"; sourceTree = "<group>"; };
 		9D2FAD9D287ED03E00E814A7 /* DepthShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = DepthShader.metal; sourceTree = "<group>"; };
+		9D57F6792D71B91E00DB9DC0 /* UDPSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDPSender.swift; sourceTree = "<group>"; };
+		9D57F67B2D71B9FB00DB9DC0 /* UDPReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDPReceiver.swift; sourceTree = "<group>"; };
+		9D57F6832D76F77900DB9DC0 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		9D57F6852D7AE74600DB9DC0 /* JoystickView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoystickView.swift; sourceTree = "<group>"; };
+		9D57F6872D82C7B400DB9DC0 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
 		9D5AD904277C16E8004ECD57 /* face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = face.png; sourceTree = "<group>"; };
 		9D5AD906277C171D004ECD57 /* 加载图片.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "加载图片.swift"; sourceTree = "<group>"; };
 		9D5EF1E426F2F7FF00D94537 /* TextureRenderer.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = TextureRenderer.metal; sourceTree = "<group>"; };
@@ -100,7 +112,7 @@
 		9D67460E26F1EFA800D7F71B /* MetalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalVC.swift; sourceTree = "<group>"; };
 		9D69860B27181E9A0022FB41 /* PanSwift-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanSwift-Bridging-Header.h"; sourceTree = "<group>"; };
 		9D69C4D727198DDD00EE9C49 /* Learning.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Learning.metal; sourceTree = "<group>"; };
-		9D6A328C28F1743100FA67E1 /* LightAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightAlertVC.swift; sourceTree = "<group>"; };
+		9D6A328C28F1743100FA67E1 /* 操作手柄.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "操作手柄.swift"; sourceTree = "<group>"; };
 		9D6A5C302735333D00EBBD7F /* 灯光.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "灯光.swift"; sourceTree = "<group>"; };
 		9D6A5C322735428500EBBD7F /* LightShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = LightShader.metal; sourceTree = "<group>"; };
 		9D6BE4AD2851FE7E00AADD52 /* 多镜头相机.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "多镜头相机.swift"; sourceTree = "<group>"; };
@@ -121,6 +133,7 @@
 		9D8C269326F5EA070090153D /* untitled.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = untitled.obj; sourceTree = "<group>"; };
 		9D8F09A528892E5E002E19AB /* PMetalGrayFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PMetalGrayFilter.swift; sourceTree = "<group>"; };
 		9D8F09A728892F63002E19AB /* GrayShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = GrayShader.metal; sourceTree = "<group>"; };
+		9D95C8AA2C758D3F00BC4665 /* 图片水印.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "图片水印.swift"; sourceTree = "<group>"; };
 		9D9C92F32B91BB8400C6D63A /* cie.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cie.png; sourceTree = "<group>"; };
 		9D9D776026F07E9D00F4F4BC /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		9DC2E29D26EF38CA00EB47C4 /* HSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HSLog.swift; sourceTree = "<group>"; };
@@ -134,6 +147,7 @@
 		9DE399792785A9120020A937 /* LutFilter.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = LutFilter.metal; sourceTree = "<group>"; };
 		9DE93E20277B0635009D8227 /* MetalGuide.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = MetalGuide.md; sourceTree = "<group>"; };
 		9DEEB4F228BF585200CBE23C /* 色坐标.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "色坐标.swift"; sourceTree = "<group>"; };
+		9DF527C32C7715B2002B7472 /* WatermarkShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = WatermarkShader.metal; sourceTree = "<group>"; };
 		9DF5A85028D8524600D42885 /* HSI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HSI.swift; sourceTree = "<group>"; };
 		9DF5A85228D8525500D42885 /* HSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HSV.swift; sourceTree = "<group>"; };
 		9DF5A85428D856A500D42885 /* HSVColor.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = HSVColor.metal; sourceTree = "<group>"; };
@@ -200,7 +214,13 @@
 				9DEEB4F228BF585200CBE23C /* 色坐标.swift */,
 				9DF5A85028D8524600D42885 /* HSI.swift */,
 				9DF5A85228D8525500D42885 /* HSV.swift */,
-				9D6A328C28F1743100FA67E1 /* LightAlertVC.swift */,
+				9D6A328C28F1743100FA67E1 /* 操作手柄.swift */,
+				9D95C8AA2C758D3F00BC4665 /* 图片水印.swift */,
+				9D57F6852D7AE74600DB9DC0 /* JoystickView.swift */,
+				9D57F6832D76F77900DB9DC0 /* NetworkManager.swift */,
+				9D57F6792D71B91E00DB9DC0 /* UDPSender.swift */,
+				9D57F67B2D71B9FB00DB9DC0 /* UDPReceiver.swift */,
+				9D57F6872D82C7B400DB9DC0 /* BluetoothManager.swift */,
 				9D69860D271823410022FB41 /* Supporting Files */,
 			);
 			path = PanSwift;
@@ -300,6 +320,7 @@
 				9DF5A85628D85E7400D42885 /* CIEColor.metal */,
 				9D09071528C201FE0097F276 /* HSIColor.metal */,
 				9DF5A85428D856A500D42885 /* HSVColor.metal */,
+				9DF527C32C7715B2002B7472 /* WatermarkShader.metal */,
 			);
 			path = Metal;
 			sourceTree = "<group>";
@@ -340,12 +361,10 @@
 			buildConfigurationList = 9D65DE9F2615B41F0054724A /* Build configuration list for PBXNativeTarget "PanSwift" */;
 			buildPhases = (
 				6C09B887082762D9203D346C /* [CP] Check Pods Manifest.lock */,
-				4FE216C83A2341F8981F1E7B /* [CP-User] Run Flutter Build my_flutter Script */,
 				9D65DE872615B41D0054724A /* Sources */,
 				9D65DE882615B41D0054724A /* Frameworks */,
 				9D65DE892615B41D0054724A /* Resources */,
 				3173170F1B2CC3ED0BD8178E /* [CP] Embed Pods Frameworks */,
-				4292C27DD8EA1967AAE9A6C2 /* [CP-User] Embed Flutter Build my_flutter Script */,
 			);
 			buildRules = (
 			);
@@ -442,26 +461,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PanSwift/Pods-PanSwift-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4292C27DD8EA1967AAE9A6C2 /* [CP-User] Embed Flutter Build my_flutter Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			name = "[CP-User] Embed Flutter Build my_flutter Script";
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\nset -u\nsource \"${SRCROOT}/../../Flutter/flutter_ios/my_flutter/.ios/Flutter/flutter_export_environment.sh\"\nexport VERBOSE_SCRIPT_LOGGING=1 && \"$FLUTTER_ROOT\"/packages/flutter_tools/bin/xcode_backend.sh embed_and_thin";
-		};
-		4FE216C83A2341F8981F1E7B /* [CP-User] Run Flutter Build my_flutter Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			name = "[CP-User] Run Flutter Build my_flutter Script";
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\nset -u\nsource \"${SRCROOT}/../../Flutter/flutter_ios/my_flutter/.ios/Flutter/flutter_export_environment.sh\"\nexport VERBOSE_SCRIPT_LOGGING=1 && \"$FLUTTER_ROOT\"/packages/flutter_tools/bin/xcode_backend.sh build";
-		};
 		6C09B887082762D9203D346C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -491,7 +490,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D6A328D28F1743100FA67E1 /* LightAlertVC.swift in Sources */,
+				9D6A328D28F1743100FA67E1 /* 操作手柄.swift in Sources */,
 				9DF5A85528D856A500D42885 /* HSVColor.metal in Sources */,
 				9D8C268926F598E40090153D /* 加载系统模型.swift in Sources */,
 				9D114BEF2880087100B590BE /* PMetalBlurFilter.swift in Sources */,
@@ -507,13 +506,16 @@
 				9D2FAD9E287ED03E00E814A7 /* DepthShader.metal in Sources */,
 				9D6A5C312735333D00EBBD7F /* 灯光.swift in Sources */,
 				9D65DE8F2615B41D0054724A /* AppDelegate.swift in Sources */,
+				9D57F6842D76F77900DB9DC0 /* NetworkManager.swift in Sources */,
 				9DC9D533279AB823007E7578 /* PCameraManager.swift in Sources */,
 				9D69C4D827198DDD00EE9C49 /* Learning.metal in Sources */,
 				9D8F09A628892E5E002E19AB /* PMetalGrayFilter.swift in Sources */,
 				9D67460F26F1EFA800D7F71B /* MetalVC.swift in Sources */,
+				9D57F67A2D71B91E00DB9DC0 /* UDPSender.swift in Sources */,
 				9D8F09A828892F63002E19AB /* GrayShader.metal in Sources */,
 				9DF5A85728D85E7400D42885 /* CIEColor.metal in Sources */,
 				9D5AD907277C171D004ECD57 /* 加载图片.swift in Sources */,
+				9DF527C42C7715B2002B7472 /* WatermarkShader.metal in Sources */,
 				9D09071628C201FE0097F276 /* HSIColor.metal in Sources */,
 				9D65DE912615B41D0054724A /* SceneDelegate.swift in Sources */,
 				9D6A5C332735428500EBBD7F /* LightShader.metal in Sources */,
@@ -522,13 +524,17 @@
 				9D6F33542714415C003E00D9 /* 绘制矩形.swift in Sources */,
 				9D6F3352271440FD003E00D9 /* PMetalLayer.swift in Sources */,
 				9DF5A85328D8525500D42885 /* HSV.swift in Sources */,
+				9D57F6882D82C7B400DB9DC0 /* BluetoothManager.swift in Sources */,
 				9D1B0EDB2856EFF00042D772 /* PMetalPIPMixer.swift in Sources */,
 				9D26AC2227F82F7B00C84F77 /* Lut滤镜封装.swift in Sources */,
 				9D8C268D26F59C830090153D /* 加载本地模型.swift in Sources */,
 				9D855D4F28F279C00098EAD3 /* ZYAlertController.swift in Sources */,
+				9D95C8AB2C758D3F00BC4665 /* 图片水印.swift in Sources */,
 				9D5EF1E526F2F7FF00D94537 /* TextureRenderer.metal in Sources */,
 				9D6BE4AE2851FE7E00AADD52 /* 多镜头相机.swift in Sources */,
+				9D57F67C2D71B9FB00DB9DC0 /* UDPReceiver.swift in Sources */,
 				9DCF055028646D9500AA207A /* PCameraUtils.swift in Sources */,
+				9D57F6862D7AE74600DB9DC0 /* JoystickView.swift in Sources */,
 				9DC2E29E26EF38CA00EB47C4 /* HSLog.swift in Sources */,
 				9DC85F882852F96E00B9FBE3 /* PCameraMultiManager.swift in Sources */,
 				9D8C268B26F59A430090153D /* MetalBasicVC.swift in Sources */,
@@ -688,7 +694,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = DQFEA2B5H2;
+				DEVELOPMENT_TEAM = JLDG6C6KDW;
 				INFOPLIST_FILE = "PanSwift/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -713,7 +719,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = DQFEA2B5H2;
+				DEVELOPMENT_TEAM = JLDG6C6KDW;
 				INFOPLIST_FILE = "PanSwift/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (

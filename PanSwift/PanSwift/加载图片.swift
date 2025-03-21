@@ -80,11 +80,18 @@ class MetalLoadImageVC: MetalBasicVC {
             MTKTextureLoader.Option.SRGB: false, // 设置是否使用SRGB像素
             MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.private.rawValue) // 纹理只在GPU应用
         ]
-        // 创建图片纹理
-        guard let imageTexture = try? textureLoader.newTexture(name: "eye", scaleFactor: 1.0, bundle: nil, options: options) else {
-            HSLog("imageTexture assignment failed")
+        // 获取图片路径
+        let imgPath = Bundle.main.path(forResource: "face.png", ofType: nil)
+        let textureUrl = URL(fileURLWithPath: imgPath!)
+        guard let imageTexture = try? textureLoader.newTexture(URL: textureUrl, options: options) else {
+            HSLog("diffuseTexture assignment failed")
             return
         }
+        // 创建图片纹理
+//        guard let imageTexture = try? textureLoader.newTexture(name: "eye", scaleFactor: 1.0, bundle: nil, options: options) else {
+//            HSLog("imageTexture assignment failed")
+//            return
+//        }
         
         // 创建渲染过程描述符
         let passDescriptor = MTLRenderPassDescriptor()

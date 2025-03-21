@@ -175,7 +175,7 @@ class MetalRenderImageVC: MetalBasicVC {
 //
 //        // 创建纹理描述符
 //        let textureDes = MTLTextureDescriptor()
-//        textureDes.pixelFormat = .bgra8Unorm
+//        textureDes.pixelFormat = .rgba8Unorm
 //        textureDes.width = Int(image.size.width)
 //        textureDes.height = Int(image.size.height)
 //        textureDes.usage = .shaderRead
@@ -185,7 +185,7 @@ class MetalRenderImageVC: MetalBasicVC {
 //        }
 //
 //        let region = MTLRegionMake2D(0, 0, Int(image.size.width), Int(image.size.height))
-//        let data = loadImage(with: image)
+//        let data = PCameraUtils.loadImageBytes(with: image)
 //        imageTexture?.replace(region: region, mipmapLevel: 0, withBytes: data, bytesPerRow: 4 * Int(image.size.width))
 //        data.deallocate()
     }

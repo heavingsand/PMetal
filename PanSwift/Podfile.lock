@@ -1,27 +1,16 @@
 PODS:
-  - Flutter (1.0.0)
-  - FlutterPluginRegistrant (0.0.1):
-    - Flutter
   - PMetal (0.0.1)
 
 DEPENDENCIES:
-  - Flutter (from `../../Flutter/flutter_ios/my_flutter/.ios/Flutter`)
-  - FlutterPluginRegistrant (from `../../Flutter/flutter_ios/my_flutter/.ios/Flutter/FlutterPluginRegistrant`)
   - PMetal (from `..`)
 
 EXTERNAL SOURCES:
-  Flutter:
-    :path: "../../Flutter/flutter_ios/my_flutter/.ios/Flutter"
-  FlutterPluginRegistrant:
-    :path: "../../Flutter/flutter_ios/my_flutter/.ios/Flutter/FlutterPluginRegistrant"
   PMetal:
     :path: ".."
 
 SPEC CHECKSUMS:
-  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  FlutterPluginRegistrant: 0b732256b4829f9783c18c68e2f9adacc1536955
   PMetal: 2915938587018c46af1840a7435990676e2306fd
 
-PODFILE CHECKSUM: da76c5cc0531e06d80c2cc058ed4d3a9530ba6d7
+PODFILE CHECKSUM: 7d4d004e91c42500959882ec75172287e50e3c9e
 
 COCOAPODS: 1.15.2
